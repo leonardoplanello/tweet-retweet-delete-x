@@ -1,0 +1,40 @@
+{
+  "name": "tweet-retweet-purge-x",
+  "version": "1.0.0",
+  "description": "Extensão Chrome (Manifest V3) para leitura, filtragem, seleção e exclusão em lote de Tweets e Retweets no X (Twitter) sem API oficial.",
+  "main": "dist/popup.js",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "typecheck": "tsc --noEmit",
+    "generate-icons": "node scripts/generate-icons.js",
+    "screenshots": "node scripts/capture-screenshots.js"
+  },
+  "keywords": [
+    "twitter",
+    "x",
+    "tweet-deleter",
+    "tweet-purge",
+    "unretweet",
+    "chrome-extension",
+    "manifest-v3",
+    "clean-architecture",
+    "typescript"
+  ],
+  "author": "Leonardo Planello <119642102+leonardoplanello@users.noreply.github.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonardoplanello/tweet-retweet-purge-x.git"
+  },
+  "bugs": {
+    "url": "https://github.com/leonardoplanello/tweet-retweet-purge-x/issues"
+  },
+  "homepage": "https://github.com/leonardoplanello/tweet-retweet-purge-x#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.3.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}
+

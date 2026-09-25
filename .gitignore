@@ -1,0 +1,33 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Build artifacts (dist can be built via `npm run build`)
+# Note: dist is included or excluded based on preference; standard source repo ignores dist/
+# but if users want load unpacked without building, we can keep or ignore.
+# Let's include dist or ignore? Standard npm is ignore dist or track build if release.
+# Let's ignore dist or keep it? Wait! In Chrome extensions on GitHub, users without Node love to download a ready-to-load folder, or we can track dist. But node_modules is huge!
+# Let's definitely ignore node_modules and temporary/system files.
+
+# System files
+.DS_Store
+Thumbs.db
+*.local
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary test outputs and screenshots renderers
+temp/
+*.log
+screenshot_test.png
+scripts/temp-*
