@@ -1,189 +1,190 @@
 <div align="center">
 
-  <img src="docs/screenshots/hero-banner.png" alt="Tweet & Retweet Purge for X" width="100%" />
+  <img src="docs/screenshots/hero-banner.png" alt="Tweet & Retweet Delete for X" width="100%" />
 
   <br />
 
-  <h1>⚡ Tweet & Retweet Purge for X (Twitter)</h1>
+  <h1>⚡ Tweet & Retweet Delete for X (Twitter)</h1>
 
   <p>
-    <strong>A ferramenta definitiva para escanear, filtrar e excluir em lote Tweets e Retweets no X (Twitter)</strong><br />
-    <em>Sem necessidade de API oficial paga, com separação estrita de tipos, cadência humana anti-ban e execução resiliente em segundo plano.</em>
+    <strong>The ultimate tool to scan, filter, select, and bulk delete Tweets and Retweets on X (Twitter)</strong><br />
+    <em>Without requiring the paid official API, featuring strict post-type separation, human anti-ban cadence, and resilient background execution.</em>
   </p>
 
   <p>
-    <a href="#-instalação-passo-a-passo"><img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Chrome MV3" /></a>
-    <a href="#-estrutura-e-arquitetura"><img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-    <a href="#-privacidade-e-segurança"><img src="https://img.shields.io/badge/Privacidade-100%25_Local-00BA7C?style=for-the-badge&logo=shield&logoColor=white" alt="Privacidade 100% Local" /></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-F59E0B?style=for-the-badge" alt="MIT License" /></a>
+    <a href="#-step-by-step-installation"><img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Chrome MV3" /></a>
+    <a href="#-software-architecture"><img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+    <a href="#-privacy--security"><img src="https://img.shields.io/badge/Privacy-100%25_Local-00BA7C?style=for-the-badge&logo=shield&logoColor=white" alt="100% Local Privacy" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge" alt="MIT License" /></a>
   </p>
 
   <p>
-    <a href="#-funcionalidades-principais">Funcionalidades</a> •
-    <a href="#-capturas-de-tela">Demonstração Visual</a> •
-    <a href="#-instalação-passo-a-passo">Instalação</a> •
-    <a href="#-guia-de-uso">Guia de Uso</a> •
-    <a href="#-arquitetura">Arquitetura</a> •
-    <a href="#-privacidade-e-segurança">Segurança</a>
+    <a href="#-why-this-project-exists">Why This Project</a> •
+    <a href="#-visual-tour">Visual Tour</a> •
+    <a href="#-key-features">Key Features</a> •
+    <a href="#-step-by-step-installation">Installation</a> •
+    <a href="#-usage-guide">Usage Guide</a> •
+    <a href="#-software-architecture">Architecture</a> •
+    <a href="#-privacy--security">Security</a>
   </p>
 </div>
 
 ---
 
-## 💡 Por que este projeto existe?
+## 💡 Why This Project Exists
 
-Com as alterações nas políticas do **X (Twitter)**, o acesso à API oficial passou a exigir planos pagos de custo extremamente elevado (a partir de centenas de dólares mensais) apenas para excluir postagens da sua própria conta. Além disso, as interfaces web convencionais limitam a rolagem da timeline a apenas cerca de **3.200 tweets**.
+With recent changes to **X (Twitter)** policies, official API access requires expensive subscription tiers (costing hundreds or thousands of dollars per month) simply to delete posts from your own account. In addition, standard web interfaces restrict timeline scrolling to only about **3,200 tweets**.
 
-O **Tweet & Retweet Purge for X** foi desenvolvido para devolver o controle total da sua conta e da sua privacidade:
-- **100% Gratuito e Ilimitado**: Opera diretamente na sessão do seu próprio navegador sem depender de chaves de API pagas.
-- **Separação Rigorosa**: Diferencia com precisão tweets originais/respostas de retweets (unretweet).
-- **Sem Limites de 3.200 Tweets**: Suporta o arquivo oficial de exportação de dados do X (`tweets.js` / `.json`), permitindo limpar contas com dezenas de milhares de postagens desde a criação.
-- **Cadência Inteligente**: Intervalos aleatórios humanos e auto-recuo em caso de Rate Limit (HTTP 429).
-- **Não Trava ao Minimizar**: Processamento no Service Worker em segundo plano com suporte a janelas independentes, abas completas e Side Panel lateral.
-
----
-
-## 📸 Demonstração Visual
-
-### 💬 1. Leitura, Busca e Seleção Fina de Tweets
-Filtre por qualquer termo ou intervalo de datas (De / Até). Marque todos com um clique ou selecione posts específicos.
-<div align="center">
-  <img src="docs/screenshots/01-tweets-list.png" alt="Lista e Filtros de Tweets" width="600" />
-</div>
-
-<br />
-
-### 🔁 2. Aba Dedicada para Retweets
-Veja exatamente de quem foi cada retweet antes de apagá-lo. Desfaça retweets antigos sem colocar seus tweets autorais em risco.
-<div align="center">
-  <img src="docs/screenshots/02-retweets-list.png" alt="Aba de Retweets" width="600" />
-</div>
-
-<br />
-
-### 🎯 3. Teste Rápido / Exclusão Direta por URL
-Deseja apagar apenas um post específico sem carregar a lista? Basta colar a URL ou ID do tweet e disparar a exclusão imediata.
-<div align="center">
-  <img src="docs/screenshots/03-direct-url-delete.png" alt="Aba de Teste / Exclusão Direta" width="600" />
-</div>
-
-<br />
-
-### 📁 4. Importação do Twitter Archive Oficial (`tweets.js`)
-Diga adeus ao limite de 3.200 tweets da timeline. Arraste seu arquivo de backup oficial e indexe todo o histórico da conta.
-<div align="center">
-  <img src="docs/screenshots/04-archive-importer.png" alt="Importador de Arquivo do Twitter" width="600" />
-</div>
-
-<br />
-
-### ⚙️ 5. Controle de Cadência e Proteção Anti-Rate Limit
-Ajuste os milissegundos mínimos e máximos entre cada requisição. Ative cooldown automático caso receba status HTTP 429.
-<div align="center">
-  <img src="docs/screenshots/05-settings-cadence.png" alt="Ajustes e Cadência" width="600" />
-</div>
-
-<br />
-
-### 🛡️ 6. Execução Resiliente em Segundo Plano & Console ao Vivo
-Acompanhe o lote em tempo real com barra de progresso, botões de Pausar/Cancelar e console com logs coloridos.
-<div align="center">
-  <img src="docs/screenshots/06-live-background-progress.png" alt="Execução em Segundo Plano" width="600" />
-</div>
+**Tweet & Retweet Delete for X** was built to restore complete control over your account and privacy:
+- **100% Free & Unlimited**: Runs directly within your existing browser session without relying on paid developer API keys.
+- **Strict Separation**: Rigorously separates original tweets and replies from retweets (unretweet).
+- **Overcomes the 3,200 Tweet Limit**: Native support for the official X data export archive (`tweets.js` / `.json`), allowing you to clean accounts with tens of thousands of tweets dating back to account creation.
+- **Human-Like Cadence**: Configurable randomized intervals and automatic cooldown upon encountering Rate Limits (HTTP 429).
+- **Does Not Freeze on Minimize**: Background execution via Manifest V3 Service Worker with keep-awake mechanisms, persistent full tab mode, standalone windows, and Chrome Side Panel support.
 
 ---
 
-## ✨ Funcionalidades Principais
+## 📸 Visual Tour
 
-| Recurso | Detalhes |
+### 💬 1. Read, Search, and Fine-Tune Tweet Selection
+Filter by any keyword or date range (From / To). Bulk select with one click or pick specific posts.
+<div align="center">
+  <img src="docs/screenshots/01-tweets-list.png" alt="Tweet List and Filter Controls" width="600" />
+</div>
+
+<br />
+
+### 🔁 2. Dedicated Retweet Management
+Review who each retweet originated from before deletion. Undo old retweets without putting your own original content at risk.
+<div align="center">
+  <img src="docs/screenshots/02-retweets-list.png" alt="Retweets Management Tab" width="600" />
+</div>
+
+<br />
+
+### 🎯 3. Direct Deletion & Test Tweet Runner
+Need to delete a specific post without scanning your entire timeline? Paste the URL or status ID and trigger immediate deletion.
+<div align="center">
+  <img src="docs/screenshots/03-direct-url-delete.png" alt="Direct URL Deletion Tab" width="600" />
+</div>
+
+<br />
+
+### 📁 4. Official Twitter Archive Importer (`tweets.js`)
+Bypass the web timeline 3,200 tweet limitation. Drag and drop your official backup file to index your complete account history.
+<div align="center">
+  <img src="docs/screenshots/04-archive-importer.png" alt="Archive File Importer" width="600" />
+</div>
+
+<br />
+
+### ⚙️ 5. Cadence Control & Anti-Rate Limit Protection
+Configure minimum and maximum delays between requests. Automatically pauses and cools down when receiving HTTP 429 status codes.
+<div align="center">
+  <img src="docs/screenshots/05-settings-cadence.png" alt="Settings and Cadence Controls" width="600" />
+</div>
+
+<br />
+
+### 🛡️ 6. Resilient Background Processing & Live Execution Console
+Track your batch in real time with progress indicators, Pause/Cancel controls, and color-coded timestamped logs.
+<div align="center">
+  <img src="docs/screenshots/06-live-background-progress.png" alt="Live Background Processing" width="600" />
+</div>
+
+---
+
+## ✨ Key Features
+
+| Feature | Details |
 | :--- | :--- |
-| **Dois Motores de Exclusão** | ⚡ **GraphQL/REST Interno** (requisições autenticadas diretas via sessão) e 🖱️ **Automação DOM** (emulação de cliques reais na UI do X com tolerância a mudanças de API). |
-| **Modo Híbrido com Fallback** | Tenta exclusão rápida via requisição; se houver divergência de QueryID, realiza fallback transparente para navegação DOM. |
-| **Separação Tweets vs. Retweets** | Abas isoladas com contadores individuais de itens carregados e selecionados. |
-| **Filtros Avançados** | Busca instantânea por palavras-chave e filtro de intervalo por data (`De` e `Até`). |
-| **Importador Archive (.js / .json)** | Lê diretamente o dump oficial fornecido pelo X (`tweets.js`), contornando o teto de 3.200 tweets da interface web. |
-| **Execução em Segundo Plano** | Gerenciado pelo `Background Service Worker` do Manifest V3. O processo não morre ao clicar fora do popup ou minimizar o Chrome. |
-| **Keep-Awake & Anti-Throttling** | Mecanismos de áudio inaudível e Screen Wake Lock para impedir que o Chrome suspenda timers em segundo plano. |
-| **Modos de Visualização** | Popup padrão, botão `⤢ Aba` para abrir em tela cheia, botão `🗗 Janela` independente e compatibilidade com o **Chrome Side Panel**. |
-| **Console de Execução Integrado** | Log visual com carimbos de data/hora, status HTTP e identificação de erros. |
+| **Dual Deletion Engines** | ⚡ **Internal GraphQL/REST** (fast authenticated requests using active web session cookies) and 🖱️ **DOM Automation** (real user click emulation on X UI, immune to GraphQL query ID changes). |
+| **Hybrid Mode with Auto-Fallback** | Attempts rapid GraphQL deletion first; automatically falls back to visual DOM navigation if query IDs change. |
+| **Strict Separation (Tweets vs. Retweets)** | Dedicated tabs with independent counters for loaded and selected items. |
+| **Advanced Filtering** | Instant keyword search and date range filters (`From` and `To`). |
+| **Archive Importer (.js / .json)** | Directly parses official X account dumps (`tweets.js`), unlocking unlimited history deletion. |
+| **Background Execution** | Managed by a Manifest V3 `Service Worker`. The process continues uninterrupted even if the popup closes or the browser is minimized. |
+| **Keep-Awake & Anti-Throttling** | Inaudible Web Audio and Screen Wake Lock helpers prevent Chrome from putting background tasks to sleep. |
+| **Flexible Display Modes** | Standard popup, `⤢ Tab` button for permanent full-screen use, `🗗 Window` for standalone floating window, and Chrome Side Panel support. |
+| **Live Execution Console** | Built-in terminal log with real-time timestamps, HTTP statuses, and step-by-step diagnostic information. |
 
 ---
 
-## 📦 Instalação Passo a Passo
+## 📦 Step-by-Step Installation
 
-### Método Rápido (Usando a pasta `dist` já compilada)
+### Quick Method (Using the pre-built `dist` folder)
 
-1. Clone ou baixe este repositório no seu computador:
+1. Clone or download this repository to your machine:
    ```bash
-   git clone https://github.com/leonardoplanello/tweet-retweet-purge-x.git
+   git clone https://github.com/leonardoplanello/tweet-retweet-delete-x.git
    ```
-2. Abra o Google Chrome e digite na barra de endereços:
+2. Open Google Chrome and navigate to the extensions page:
    ```text
    chrome://extensions
    ```
-3. No canto superior direito, ative a opção **"Modo do desenvolvedor"** (*Developer mode*).
-4. Clique no botão **"Carregar sem compactação"** (*Load unpacked*).
-5. Selecione a pasta **`dist`** que está dentro do diretório do projeto clonado.
-6. Pronto! A extensão **"Tweet & Retweet Purge for X"** já estará instalada e pronta para uso. Fixe-a na barra de ferramentas clicando no ícone do quebra-cabeça.
+3. In the top-right corner, enable **"Developer mode"**.
+4. Click the **"Load unpacked"** button.
+5. Select the **`dist`** directory inside the cloned project folder.
+6. The **"Tweet & Retweet Delete for X"** extension will appear installed and ready. Pin it to your Chrome toolbar for quick access!
 
 ---
 
-### Compilação a partir do Código-Fonte (Opcional para Desenvolvedores)
+### Building from Source (For Developers)
 
-Se você deseja inspecionar ou modificar o código TypeScript:
+If you want to modify or compile the TypeScript code yourself:
 
 ```bash
-# 1. Instalar dependências de desenvolvimento
+# 1. Install development dependencies
 npm install
 
-# 2. Compilar o projeto com esbuild
+# 2. Build production bundles with esbuild
 npm run build
 
-# 3. Verificação de tipos estritos TypeScript
+# 3. Run strict TypeScript type checks
 npm run typecheck
 
-# 4. Modo de observação (Hot rebuild)
+# 4. Watch mode (Hot rebuild on save)
 npm run watch
 
-# 5. Gerar novos ícones ou capturas de tela
+# 5. Generate high-resolution icons or documentation screenshots
 npm run generate-icons
 npm run screenshots
 ```
 
 ---
 
-## 🚀 Guia de Uso
+## 🚀 Usage Guide
 
-### Cenário A: Apagar posts escaneando a timeline do seu perfil
-1. Abra uma aba no [x.com](https://x.com) e certifique-se de estar conectado à sua conta.
-2. Navegue até a página do seu próprio perfil (`https://x.com/seu_usuario`).
-3. Abra a extensão. O badge no cabeçalho indicará: `🟢 @seu_usuario`.
-4. Clique no botão **`🔍 Varrer Perfil`**. A extensão rolará a timeline automaticamente coletando seus tweets e retweets.
-5. Use os filtros de texto ou datas para refinar os itens desejados.
-6. Clique em **"🗑️ Apagar Selecionados"** e acompanhe a exclusão em tempo real.
+### Scenario A: Scan and delete posts from your live profile timeline
+1. Open [x.com](https://x.com) in any tab and make sure you are logged in.
+2. Navigate to your profile page (`https://x.com/your_username`).
+3. Open the extension popup. The badge in the header will show: `🟢 @your_username`.
+4. Click **`🔍 Scan Profile`**. The extension will scroll your timeline automatically, collecting tweets and retweets.
+5. Apply text or date range filters to select the posts you want removed.
+6. Click **"🗑️ Delete Selected"** and monitor progress in real time.
 
-### Cenário B: Apagar todo o histórico ilimitado da conta (Twitter Archive)
-1. No X, acesse: *Mais > Configurações e privacidade > Sua conta > Baixar um arquivo com seus dados*.
-2. Quando receber o e-mail do X, baixe e extraia o arquivo `.zip`.
-3. Abra a extensão, entre na aba **📁 Arquivo .js**.
-4. Arraste o arquivo `data/tweets.js` para a área indicada.
-5. Todos os seus tweets históricos serão carregados instantaneamente na extensão para que você possa filtrar e excluir em lote.
+### Scenario B: Delete your entire unlimited account history (Twitter Archive)
+1. On X, go to: *More > Settings and privacy > Your account > Download an archive of your data*.
+2. Once you receive the email notification from X, download and extract the `.zip` archive.
+3. Open the extension and switch to the **📁 .js Archive** tab.
+4. Drag and drop the `data/tweets.js` file into the upload zone.
+5. All your historical tweets will be indexed locally, ready for filtering and mass deletion.
 
-### Cenário C: Excluir um tweet específico diretamente via URL
-1. Vá na aba **🎯 Teste / URL**.
-2. Cole o link do tweet (ex: `https://x.com/seu_usuario/status/1234567890`).
-3. Escolha o método (recomendamos *Navegação Direta na UI*).
-4. Clique em **"🗑️ Apagar Este Tweet Agora"**.
+### Scenario C: Delete a specific tweet directly via URL
+1. Switch to the **🎯 Test / URL** tab.
+2. Paste the URL or status ID (e.g., `https://x.com/your_username/status/1234567890`).
+3. Select your preferred deletion method (we recommend *Direct UI Navigation*).
+4. Click **"🗑️ Delete This Tweet Now"**.
 
 ---
 
-## 🏗️ Arquitetura do Software
+## 🏗️ Software Architecture
 
-O projeto foi concebido seguindo princípios rigorosos de **Clean Architecture** e **Modularidade**, separando claramente apresentação, regras de negócio e integrações de infraestrutura:
+This project is built following strict **Clean Architecture** and **Modular Component** principles, completely avoiding monolithic files:
 
 ```text
-tweet-retweet-purge-x/
-├── dist/                      # Extensão empacotada pronta para carregar no Chrome
+tweet-retweet-delete-x/
+├── dist/                      # Packaged extension ready to load in Chrome
 │   ├── manifest.json
 │   ├── popup.html
 │   ├── popup.css
@@ -192,9 +193,9 @@ tweet-retweet-purge-x/
 │   ├── content.js
 │   └── icons/
 ├── src/
-│   ├── background/            # Service Worker Manifest V3
-│   │   └── service-worker.ts  # Orquestrador de jobs, alarmes e ciclo de vida
-│   ├── components/            # Componentes visuais isolados e desacoplados
+│   ├── background/            # Manifest V3 Background Service Worker
+│   │   └── service-worker.ts  # Background job lifecycle, alarms, message handlers
+│   ├── components/            # Decoupled UI presentation components
 │   │   ├── tab-manager.ts
 │   │   ├── tweet-card.ts
 │   │   ├── tweet-list-view.ts
@@ -204,52 +205,52 @@ tweet-retweet-purge-x/
 │   │   ├── progress-bar-view.ts
 │   │   ├── window-mode-view.ts
 │   │   └── logger-view.ts
-│   ├── content/               # Content Scripts injetados no X.com
+│   ├── content/               # Content scripts injected into X.com
 │   │   ├── content-main.ts
-│   │   ├── dom-scanner.ts     # Leitura de elementos na timeline
-│   │   ├── dom-clicker.ts     # Automação de exclusão visual e menus
-│   │   └── automation-hud.ts  # Overlay informativo visual
-│   ├── services/              # Casos de uso e lógica de negócio
-│   │   ├── x-session-service.ts       # Detecção de sessão e tokens de cookies
-│   │   ├── graphql-delete-service.ts  # Mutações diretas GraphQL e endpoints REST
-│   │   ├── dom-delete-service.ts      # Deleção via automação de aba dedicada
-│   │   ├── automation-tab-service.ts  # Gerenciamento de abas para o robô DOM
-│   │   ├── background-job-service.ts  # Fila de execução assíncrona persistente
-│   │   ├── rate-limiter.ts            # Delays aleatórios e cooldown HTTP 429
-│   │   ├── archive-parser-service.ts  # Leitura e parsing de tweets.js / JSON
-│   │   ├── storage-service.ts         # Persistência via chrome.storage.local
-│   │   └── keep-awake-service.ts      # Prevenção de suspensão do navegador
-│   └── types/                 # Interfaces e contratos tipados
+│   │   ├── dom-scanner.ts     # Timeline DOM scanner and scroll automation
+│   │   ├── dom-clicker.ts     # Real-click emulation and confirmation handler
+│   │   └── automation-hud.ts  # Non-intrusive floating status HUD
+│   ├── services/              # Business logic & use cases
+│   │   ├── x-session-service.ts       # Cookie extraction & CSRF token reader
+│   │   ├── graphql-delete-service.ts  # Direct GraphQL mutations & REST endpoints
+│   │   ├── dom-delete-service.ts      # Dedicated tab DOM deletion orchestrator
+│   │   ├── automation-tab-service.ts  # Browser tab management for DOM actions
+│   │   ├── background-job-service.ts  # Persistent background job processor
+│   │   ├── rate-limiter.ts            # Randomized delay & HTTP 429 cooldown
+│   │   ├── archive-parser-service.ts  # Parsing logic for tweets.js / JSON
+│   │   ├── storage-service.ts         # Chrome storage persistence layer
+│   │   └── keep-awake-service.ts      # Browser throttling prevention
+│   └── types/                 # Strict TypeScript interface contracts
 │       ├── tweet.ts
 │       ├── config.ts
 │       ├── messages.ts
 │       └── batch-job.ts
-├── scripts/                   # Utilitários de build, assets e screenshots
-│   ├── generate-icons.js      # Gerador de ícones SVG/PNG em alta definição
-│   └── capture-screenshots.js # Captura automatizada de telas via Chrome Headless
-├── docs/                      # Screenshots e material visual de documentação
+├── scripts/                   # Build, asset, and screenshot utilities
+│   ├── generate-icons.js      # High-definition icon renderer
+│   └── capture-screenshots.js # Automated Chrome Headless screenshot capture
+├── docs/                      # High-resolution screenshots and visual documentation
 │   └── screenshots/
-├── build.js                   # Script de compilação rápida com esbuild
+├── build.js                   # Fast esbuild bundle pipeline
 ├── package.json
 └── tsconfig.json
 ```
 
 ---
 
-## 🔒 Privacidade e Segurança
+## 🔒 Privacy & Security
 
-- 🛡️ **Execução 100% Local**: O código roda exclusivamente no seu navegador. Nenhuma informação, token, cookie ou conteúdo de tweet é transmitido para servidores de terceiros.
-- 🔑 **Sem Necessidade de Chaves Secretas**: Você não precisa criar conta de desenvolvedor nem gerar API Keys no portal do X.
-- 📜 **Código Aberto**: Toda a base de código é aberta e passível de auditoria completa pela comunidade.
+- 🛡️ **100% Local Execution**: All logic runs exclusively inside your browser. No tokens, cookies, account credentials, or tweet contents are ever sent to third-party servers.
+- 🔑 **No Secret Keys Required**: You do not need to register a developer account or create API keys on the X Developer Portal.
+- 📜 **Auditable Open Source**: The entire codebase is open, modular, and freely available for community review.
 
 ---
 
-## 📄 Licença
+## 📄 License
 
-Distribuído sob a licença **MIT**. Consulte o arquivo [`LICENSE`](LICENSE) para obter mais informações.
+Distributed under the **MIT** License. See [`LICENSE`](LICENSE) for more information.
 
 ---
 
 <div align="center">
-  Desenvolvido com dedicação por <a href="https://github.com/leonardoplanello"><strong>Leonardo Planello</strong></a> 🚀
+  Crafted with care by <a href="https://github.com/leonardoplanello"><strong>Leonardo Planello</strong></a> 🚀
 </div>

@@ -115,8 +115,8 @@ export class TweetListView {
       const emptyDiv = document.createElement('div');
       emptyDiv.className = 'empty-state';
       emptyDiv.innerHTML = `
-        <p>Nenhum ${this.options.isRetweetList ? 'retweet' : 'tweet'} encontrado.</p>
-        <span class="empty-hint">Use a aba de varredura ou importe seu arquivo do Twitter.</span>
+        <p>No ${this.options.isRetweetList ? 'retweets' : 'tweets'} found.</p>
+        <span class="empty-hint">Use the profile scan button or import your Twitter archive.</span>
       `;
       container.appendChild(emptyDiv);
       return;
@@ -146,6 +146,6 @@ export class TweetListView {
     if (!this.options.counterElement) return;
     const selectedCount = visible.filter((t) => t.selected && t.status !== 'success').length;
     const totalCount = visible.length;
-    this.options.counterElement.textContent = `${selectedCount} selecionado(s) de ${totalCount}`;
+    this.options.counterElement.textContent = `${selectedCount} selected of ${totalCount}`;
   }
 }

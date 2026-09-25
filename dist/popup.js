@@ -461,13 +461,13 @@
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const activeTab = tabs[0];
       if (!activeTab || !activeTab.id || !activeTab.url || !activeTab.url.includes("x.com") && !activeTab.url.includes("twitter.com")) {
-        throw new Error("Abra a p\xE1gina do seu perfil no X (ex: x.com/seu_usuario) antes de iniciar a varredura.");
+        throw new Error("Please open your X profile page (e.g. x.com/your_username) before starting the scan.");
       }
       const targetUsername = this.extractUsernameFromUrl(activeTab.url);
       if (targetUsername) {
-        callbacks.onLog(`[VARREDURA] Alvo identificado: @${targetUsername}. Apenas seus posts e retweets ser\xE3o coletados.`);
+        callbacks.onLog(`[SCAN] Target identified: @${targetUsername}. Only your posts and retweets will be collected.`);
       } else {
-        callbacks.onLog(`[VARREDURA] Iniciando busca de tweets na aba ativa (${activeTab.url})...`);
+        callbacks.onLog(`[SCAN] Starting tweet scan on active tab (${activeTab.url})...`);
       }
       try {
         await chrome.scripting.executeScript({
@@ -486,11 +486,11 @@
             }
             if (response && response.success) {
               const tweets = response.tweets || [];
-              callbacks.onLog(`[VARREDURA CONCLU\xCDDA] Foram identificados ${tweets.length} tweets/retweets v\xE1lidos pertencentes ao usu\xE1rio.`);
+              callbacks.onLog(`[SCAN COMPLETED] Identified ${tweets.length} valid tweets/retweets belonging to the user.`);
               const saved = await StorageService.mergeTweets(tweets, targetUsername || void 0);
               resolve(saved);
             } else {
-              reject(new Error(response?.error || "Falha ao escanear a timeline"));
+              reject(new Error(response?.error || "Failed to scan timeline"));
             }
           }
         );
@@ -530,7 +530,7 @@
       if (!session.csrfToken) {
         return {
           success: false,
-          error: "Sess\xE3o do X n\xE3o encontrada. Abra o x.com no navegador para sincronizar seu login."
+          error: "X session not found. Open x.com in your browser to sync your login."
         };
       }
       const queryIdsToTry = customQueryId ? [customQueryId, ...this.KNOWN_DELETE_QUERY_IDS] : this.KNOWN_DELETE_QUERY_IDS;
@@ -552,16 +552,16 @@
           if (res.status === 200) {
             const body = await res.json().catch(() => ({}));
             if (body.errors && body.errors.length > 0) {
-              const msg = body.errors[0]?.message || "Erro interno no GraphQL";
+              const msg = body.errors[0]?.message || "Internal GraphQL error";
               return { success: false, statusCode: 200, error: msg };
             }
             return { success: true, statusCode: 200 };
           }
           if (res.status === 429) {
-            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit excedido (429)" };
+            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
           }
         } catch (err) {
-          console.warn(`Tentativa GraphQL DeleteTweet com ${qId} falhou:`, err);
+          console.warn(`GraphQL DeleteTweet attempt with ${qId} failed:`, err);
         }
       }
       try {
@@ -575,15 +575,15 @@
           return { success: true, statusCode: res.status };
         }
         if (res.status === 429) {
-          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit excedido (429)" };
+          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
         }
         if (res.status === 404) {
-          return { success: true, statusCode: 404, error: "Tweet j\xE1 exclu\xEDdo ou n\xE3o encontrado (404)" };
+          return { success: true, statusCode: 404, error: "Tweet already deleted or not found (404)" };
         }
         return {
           success: false,
           statusCode: res.status,
-          error: `Falha na requisi\xE7\xE3o HTTP: ${res.status} ${res.statusText}`
+          error: `HTTP request failed: ${res.status} ${res.statusText}`
         };
       } catch (err) {
         return {
@@ -600,7 +600,7 @@
       if (!session.csrfToken) {
         return {
           success: false,
-          error: "Sess\xE3o do X n\xE3o encontrada. Abra o x.com no navegador."
+          error: "X session not found. Open x.com in your browser."
         };
       }
       const queryIdsToTry = customQueryId ? [customQueryId, ...this.KNOWN_UNRETWEET_QUERY_IDS] : this.KNOWN_UNRETWEET_QUERY_IDS;
@@ -623,10 +623,10 @@
             return { success: true, statusCode: 200 };
           }
           if (res.status === 429) {
-            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit excedido (429)" };
+            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
           }
         } catch (err) {
-          console.warn(`Tentativa GraphQL DeleteRetweet com ${qId} falhou:`, err);
+          console.warn(`GraphQL DeleteRetweet attempt with ${qId} failed:`, err);
         }
       }
       try {
@@ -640,12 +640,12 @@
           return { success: true, statusCode: res.status };
         }
         if (res.status === 429) {
-          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit (429)" };
+          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
         }
         return {
           success: false,
           statusCode: res.status,
-          error: `Falha HTTP: ${res.status}`
+          error: `HTTP failure: ${res.status}`
         };
       } catch (err) {
         return {
@@ -820,9 +820,9 @@
       const badgeType = tweet.isRetweet ? "\u{1F501} Retweet" : "\u{1F4AC} Tweet";
       const badgeClass = tweet.isRetweet ? "badge-retweet" : "badge-tweet";
       let statusText = "";
-      if (tweet.status === "pending") statusText = "\u23F3 Apagando...";
-      else if (tweet.status === "success") statusText = "\u2705 Exclu\xEDdo";
-      else if (tweet.status === "failed") statusText = `\u274C Erro: ${tweet.errorMessage || "Falhou"}`;
+      if (tweet.status === "pending") statusText = "\u23F3 Deleting...";
+      else if (tweet.status === "success") statusText = "\u2705 Deleted";
+      else if (tweet.status === "failed") statusText = `\u274C Error: ${tweet.errorMessage || "Failed"}`;
       card.innerHTML = `
       <div class="tweet-card-header">
         <label class="tweet-checkbox-container">
@@ -831,16 +831,16 @@
         </label>
         <span class="badge ${badgeClass}">${badgeType}</span>
         <span class="tweet-date">${dateStr}</span>
-        <a href="${tweet.url}" target="_blank" rel="noopener noreferrer" class="tweet-link" title="Abrir no X">\u{1F517}</a>
+        <a href="${tweet.url}" target="_blank" rel="noopener noreferrer" class="tweet-link" title="Open on X">\u{1F517}</a>
       </div>
       <div class="tweet-card-body">
-        ${tweet.retweetedFrom ? `<div class="retweet-author">Retweetado de <strong>${tweet.retweetedFrom}</strong></div>` : ""}
-        ${!tweet.isRetweet && tweet.authorHandle ? `<div class="tweet-author-tag" style="font-size: 11px; color: #8899a6; margin-bottom: 4px;">Por <strong>@${tweet.authorHandle}</strong></div>` : ""}
+        ${tweet.retweetedFrom ? `<div class="retweet-author">Retweeted from <strong>${tweet.retweetedFrom}</strong></div>` : ""}
+        ${!tweet.isRetweet && tweet.authorHandle ? `<div class="tweet-author-tag" style="font-size: 11px; color: #8899a6; margin-bottom: 4px;">By <strong>@${tweet.authorHandle}</strong></div>` : ""}
         <div class="tweet-text">${this.escapeHtml(tweet.text)}</div>
         ${statusText ? `<div class="tweet-status-label ${tweet.status}">${statusText}</div>` : ""}
       </div>
       <div class="tweet-card-actions">
-        ${tweet.status !== "success" && onDeleteSingle ? `<button type="button" class="btn-single-delete" title="Apagar apenas este">\u{1F5D1}\uFE0F</button>` : ""}
+        ${tweet.status !== "success" && onDeleteSingle ? `<button type="button" class="btn-single-delete" title="Delete only this">\u{1F5D1}\uFE0F</button>` : ""}
       </div>
     `;
       const checkbox = card.querySelector(".tweet-checkbox");
@@ -861,7 +861,7 @@
       try {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
-        return `${d.toLocaleDateString("pt-BR")} ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+        return `${d.toLocaleDateString("en-US")} ${d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
       } catch {
         return dateStr;
       }
@@ -955,8 +955,8 @@
         const emptyDiv = document.createElement("div");
         emptyDiv.className = "empty-state";
         emptyDiv.innerHTML = `
-        <p>Nenhum ${this.options.isRetweetList ? "retweet" : "tweet"} encontrado.</p>
-        <span class="empty-hint">Use a aba de varredura ou importe seu arquivo do Twitter.</span>
+        <p>No ${this.options.isRetweetList ? "retweets" : "tweets"} found.</p>
+        <span class="empty-hint">Use the profile scan button or import your Twitter archive.</span>
       `;
         container.appendChild(emptyDiv);
         return;
@@ -983,7 +983,7 @@
       if (!this.options.counterElement) return;
       const selectedCount = visible.filter((t) => t.selected && t.status !== "success").length;
       const totalCount = visible.length;
-      this.options.counterElement.textContent = `${selectedCount} selecionado(s) de ${totalCount}`;
+      this.options.counterElement.textContent = `${selectedCount} selected of ${totalCount}`;
     }
   };
 
@@ -1009,22 +1009,22 @@
       if (sessionStatusEl) {
         if (session.isLoggedIn) {
           sessionStatusEl.className = "session-status-badge logged-in";
-          sessionStatusEl.textContent = "\u{1F7E2} Sess\xE3o do X ativa (ct0 detectado)";
+          sessionStatusEl.textContent = "\u{1F7E2} Active X session (ct0 detected)";
         } else {
           sessionStatusEl.className = "session-status-badge logged-out";
-          sessionStatusEl.textContent = "\u{1F7E1} Sess\xE3o n\xE3o detectada (abra o x.com em uma aba)";
+          sessionStatusEl.textContent = "\u{1F7E1} Session not detected (open x.com in a browser tab)";
         }
       }
     }
     async executeTest() {
       const rawInput = this.options.urlInput.value.trim();
       if (!rawInput) {
-        this.showStatus("Informe uma URL ou ID de tweet.", "error");
+        this.showStatus("Please provide a tweet URL or ID.", "error");
         return;
       }
       const match = rawInput.match(/status\/(\d+)/) || rawInput.match(/^(\d+)$/);
       if (!match) {
-        this.showStatus("URL inv\xE1lida. N\xE3o foi poss\xEDvel extrair o ID do tweet.", "error");
+        this.showStatus("Invalid URL. Could not extract tweet ID.", "error");
         return;
       }
       const tweetId = match[1];
@@ -1039,7 +1039,7 @@
       const authorHandle = authorMatch && authorMatch[1] !== "i" ? authorMatch[1] : void 0;
       const mockItem = {
         id: tweetId,
-        text: tweetId === "1088925139268526085" ? "Clima assim \xE9 muuuito melhor" : `Tweet de teste ${tweetId}`,
+        text: tweetId === "1088925139268526085" ? "Clima assim \xE9 muuuito melhor" : `Test tweet ${tweetId}`,
         createdAt: (/* @__PURE__ */ new Date()).toISOString(),
         isRetweet,
         url: rawInput.startsWith("http") ? rawInput : `https://x.com/i/status/${tweetId}`,
@@ -1048,23 +1048,23 @@
         status: "pending"
       };
       this.options.executeBtn.disabled = true;
-      this.showStatus(`\u23F3 Iniciando exclus\xE3o do tweet ${tweetId} via m\xE9todo ${config.method.toUpperCase()}...`, "info");
-      this.options.onLog(`[TESTE] Disparando exclus\xE3o do tweet ${tweetId} usando m\xE9todo: ${config.method}`);
+      this.showStatus(`\u23F3 Starting deletion of tweet ${tweetId} via method ${config.method.toUpperCase()}...`, "info");
+      this.options.onLog(`[TEST] Triggering deletion of tweet ${tweetId} using method: ${config.method}`);
       try {
         const result = await DeletionExecutor.execute(mockItem, config, { current: 1, total: 1 });
         if (result.success) {
-          this.showStatus(`\u2705 Tweet ${tweetId} exclu\xEDdo com sucesso! (C\xF3digo: ${result.statusCode || 200})`, "success");
-          this.options.onLog(`[TESTE SUCESSO] Tweet ${tweetId} foi apagado.`);
+          this.showStatus(`\u2705 Tweet ${tweetId} deleted successfully! (Status: ${result.statusCode || 200})`, "success");
+          this.options.onLog(`[TEST SUCCESS] Tweet ${tweetId} was deleted.`);
           this.options.onSuccess(tweetId);
         } else {
-          const errText = result.error || "Erro desconhecido durante exclus\xE3o.";
-          this.showStatus(`\u274C Falha ao excluir tweet: ${errText}`, "error");
-          this.options.onLog(`[TESTE ERRO] Tweet ${tweetId} falhou: ${errText}`);
+          const errText = result.error || "Unknown error during deletion.";
+          this.showStatus(`\u274C Failed to delete tweet: ${errText}`, "error");
+          this.options.onLog(`[TEST ERROR] Tweet ${tweetId} failed: ${errText}`);
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        this.showStatus(`\u274C Erro inesperado: ${msg}`, "error");
-        this.options.onLog(`[TESTE ERRO EXCE\xC7\xC3O] ${msg}`);
+        this.showStatus(`\u274C Unexpected error: ${msg}`, "error");
+        this.options.onLog(`[TEST ERROR EXCEPTION] ${msg}`);
       } finally {
         this.options.executeBtn.disabled = false;
         this.checkSession();
@@ -1179,28 +1179,28 @@
       });
     }
     async processFile(file) {
-      this.showStatus(`Lendo arquivo "${file.name}" (${(file.size / 1024).toFixed(1)} KB)...`, "info");
-      this.options.onLog(`[ARQUIVO] Processando arquivo de dados: ${file.name}`);
+      this.showStatus(`Reading file "${file.name}" (${(file.size / 1024).toFixed(1)} KB)...`, "info");
+      this.options.onLog(`[ARCHIVE] Processing data file: ${file.name}`);
       try {
         const content = await file.text();
         const items = ArchiveParserService.parse(content);
         if (items.length === 0) {
-          this.showStatus("Nenhum tweet foi identificado dentro do arquivo.", "error");
+          this.showStatus("No tweets were found in this file.", "error");
           return;
         }
         const tweetsCount = items.filter((t) => !t.isRetweet).length;
         const rtsCount = items.filter((t) => t.isRetweet).length;
         const merged = await StorageService.mergeTweets(items);
         this.showStatus(
-          `\u2705 Importa\xE7\xE3o conclu\xEDda! Carregados ${tweetsCount} Tweets e ${rtsCount} Retweets (${items.length} no total).`,
+          `\u2705 Import complete! Loaded ${tweetsCount} Tweets and ${rtsCount} Retweets (${items.length} total).`,
           "success"
         );
-        this.options.onLog(`[ARQUIVO SUCESSO] ${tweetsCount} tweets e ${rtsCount} retweets carregados no cache local.`);
+        this.options.onLog(`[ARCHIVE SUCCESS] ${tweetsCount} tweets and ${rtsCount} retweets cached locally.`);
         this.options.onArchiveLoaded(merged);
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        this.showStatus(`Erro ao processar: ${msg}`, "error");
-        this.options.onLog(`[ARQUIVO ERRO] ${msg}`);
+        this.showStatus(`Error processing file: ${msg}`, "error");
+        this.options.onLog(`[ARCHIVE ERROR] ${msg}`);
       }
     }
     showStatus(msg, type) {
@@ -1252,14 +1252,14 @@
       this.options.cooldownInput.addEventListener("change", save);
       this.options.customDeleteQueryIdInput.addEventListener("change", save);
       this.options.clearCacheBtn.addEventListener("click", async () => {
-        if (confirm("Deseja realmente limpar todos os tweets carregados do cache local?")) {
+        if (confirm("Are you sure you want to clear all loaded tweets from local cache?")) {
           await StorageService.clearTweets();
           this.options.onClearCache();
         }
       });
     }
     showSaveFeedback() {
-      this.options.saveFeedbackEl.textContent = "Configura\xE7\xF5es salvas!";
+      this.options.saveFeedbackEl.textContent = "Settings saved!";
       this.options.saveFeedbackEl.classList.add("visible");
       setTimeout(() => {
         this.options.saveFeedbackEl.classList.remove("visible");
@@ -1294,10 +1294,10 @@
     update(current, total, customMessage) {
       const percent = total > 0 ? Math.round(current / total * 100) : 0;
       this.options.fillElement.style.width = `${percent}%`;
-      this.options.textElement.textContent = customMessage || `Progresso: ${current} de ${total} (${percent}%)`;
+      this.options.textElement.textContent = customMessage || `Progress: ${current} of ${total} (${percent}%)`;
     }
     setPaused(isPaused) {
-      this.options.pauseBtn.textContent = isPaused ? "\u25B6\uFE0F Retomar" : "\u23F8\uFE0F Pausar";
+      this.options.pauseBtn.textContent = isPaused ? "\u25B6\uFE0F Resume" : "\u23F8\uFE0F Pause";
     }
   };
 
@@ -1347,7 +1347,7 @@
     init() {
       const isFullTab = window.innerWidth > 650 || window.location.search.includes("mode=tab");
       if (isFullTab && this.options.modeBadge) {
-        this.options.modeBadge.textContent = "\u{1F5A5}\uFE0F Modo Aba Fixa";
+        this.options.modeBadge.textContent = "\u{1F5A5}\uFE0F Full Tab Mode";
         this.options.modeBadge.classList.add("visible");
       }
       if (this.options.openTabBtn) {
@@ -1364,9 +1364,9 @@
     openInNewTab() {
       const url = chrome.runtime.getURL("popup.html?mode=tab");
       chrome.tabs.create({ url }).then(() => {
-        this.options.onLog?.("Extens\xE3o aberta em nova aba permanente (n\xE3o fecha ao clicar fora).");
+        this.options.onLog?.("Extension opened in a permanent full tab (will not close when clicking away).");
       }).catch((err) => {
-        console.error("Erro ao abrir aba:", err);
+        console.error("Error opening tab:", err);
       });
     }
     openInStandaloneWindow() {
@@ -1377,9 +1377,9 @@
         width: 860,
         height: 720
       }).then(() => {
-        this.options.onLog?.("Extens\xE3o aberta em janela flutuante independente.");
+        this.options.onLog?.("Extension opened in a standalone window.");
       }).catch((err) => {
-        console.error("Erro ao abrir janela:", err);
+        console.error("Error opening window:", err);
       });
     }
   };
@@ -1446,12 +1446,12 @@
             chrome.runtime.sendMessage({ type: "RESUME_BATCH_JOB" });
             this.progressBarView.setPaused(false);
             this.isBatchPaused = false;
-            this.loggerView.log("Solicitada retomada do processo em segundo plano.");
+            this.loggerView.log("Background resume requested.");
           } else {
             chrome.runtime.sendMessage({ type: "PAUSE_BATCH_JOB" });
             this.progressBarView.setPaused(true);
             this.isBatchPaused = true;
-            this.loggerView.log("Solicitada pausa do processo em segundo plano.");
+            this.loggerView.log("Background pause requested.");
           }
         },
         onCancel: () => {
@@ -1460,7 +1460,7 @@
           this.hideRunningBanner();
           KeepAwakeService.disable();
           this.bulkDeleteBtn.disabled = false;
-          this.loggerView.log("Cancelamento solicitado.");
+          this.loggerView.log("Cancellation requested.");
         }
       });
       this.settingsView = new SettingsView({
@@ -1473,12 +1473,12 @@
         clearCacheBtn: document.getElementById("btn-clear-cache"),
         saveFeedbackEl: document.getElementById("settings-save-feedback"),
         onConfigChange: (cfg) => {
-          this.loggerView.log(`Configura\xE7\xF5es salvas: M\xE9todo ${cfg.method.toUpperCase()} | Delay ${cfg.minDelayMs}-${cfg.maxDelayMs}ms`);
+          this.loggerView.log(`Settings saved: Method ${cfg.method.toUpperCase()} | Delay ${cfg.minDelayMs}-${cfg.maxDelayMs}ms`);
         },
         onClearCache: () => {
           this.allTweets = [];
           this.syncTweetsToLists();
-          this.loggerView.log("Cache de tweets limpo.");
+          this.loggerView.log("Tweet cache cleared.");
         }
       });
       this.windowModeView = new WindowModeView({
@@ -1572,7 +1572,7 @@
             this.syncTweetsToLists();
           });
           this.loggerView.log(
-            `[FIM DO LOTE] Conclu\xEDdo! ${message.summary.successCount} exclu\xEDdos, ${message.summary.failCount} com erro.`
+            `[BATCH COMPLETE] Done! ${message.summary.successCount} deleted, ${message.summary.failCount} failed.`
           );
         }
       });
@@ -1604,7 +1604,7 @@
         this.progressBarView.show();
         this.progressBarView.setPaused(true);
         this.progressBarView.update(state.current, state.total, state.message);
-        this.showRunningBanner("Processo pausado em segundo plano.");
+        this.showRunningBanner("Process paused in background.");
         this.bulkDeleteBtn.disabled = true;
         this.isBatchPaused = true;
       } else if (state.status === "completed" || state.status === "aborted") {
@@ -1626,7 +1626,7 @@
       if (this.bgRunningText && text) {
         this.bgRunningText.textContent = text;
       } else if (this.bgRunningText) {
-        this.bgRunningText.textContent = "Executando em segundo plano. Seguro para clicar fora ou minimizar.";
+        this.bgRunningText.textContent = "Running in background. Safe to click away or minimize.";
       }
     }
     hideRunningBanner() {
@@ -1649,7 +1649,7 @@
             if (this.allTweets.length < beforeCount) {
               await StorageService.saveTweets(this.allTweets);
               this.loggerView.log(
-                `[LIMPEZA AUTOM\xC1TICA] ${beforeCount - this.allTweets.length} resposta(s) de terceiros removida(s) do hist\xF3rico local.`
+                `[AUTO CLEANUP] ${beforeCount - this.allTweets.length} third-party reply(ies) removed from local history.`
               );
             }
           }
@@ -1657,16 +1657,16 @@
       } catch {
       }
       this.syncTweetsToLists();
-      this.loggerView.log(`Extens\xE3o carregada. ${this.allTweets.length} itens no hist\xF3rico local.`);
+      this.loggerView.log(`Extension loaded. ${this.allTweets.length} items in local cache.`);
     }
     async checkSession() {
       const session = await XSessionService.getSession();
       if (session.isLoggedIn) {
         this.sessionBadgeEl.className = "session-status-badge logged-in";
-        this.sessionBadgeEl.textContent = "\u{1F7E2} Conectado ao X";
+        this.sessionBadgeEl.textContent = "\u{1F7E2} Connected to X";
       } else {
         this.sessionBadgeEl.className = "session-status-badge logged-out";
-        this.sessionBadgeEl.textContent = "\u{1F7E1} Login n\xE3o detectado no X";
+        this.sessionBadgeEl.textContent = "\u{1F7E1} Not logged in to X";
       }
     }
     syncTweetsToLists() {
@@ -1683,59 +1683,59 @@
       const selectedCount = selectedItems.length;
       if (selectedCount > 0) {
         this.bulkDeleteBtn.disabled = false;
-        this.bulkDeleteBtn.textContent = `\u{1F5D1}\uFE0F Apagar Selecionados (${selectedCount})`;
+        this.bulkDeleteBtn.textContent = `\u{1F5D1}\uFE0F Delete Selected (${selectedCount})`;
         const tweetsSel = selectedItems.filter((t) => !t.isRetweet).length;
         const rtsSel = selectedItems.filter((t) => t.isRetweet).length;
-        this.bulkSelectionLabel.textContent = `${selectedCount} item(ns) selecionado(s) (${tweetsSel} tweets, ${rtsSel} retweets)`;
+        this.bulkSelectionLabel.textContent = `${selectedCount} item(s) selected (${tweetsSel} tweets, ${rtsSel} retweets)`;
       } else {
         this.bulkDeleteBtn.disabled = true;
-        this.bulkDeleteBtn.textContent = "\u{1F5D1}\uFE0F Apagar Selecionados (0)";
-        this.bulkSelectionLabel.textContent = "Nenhum tweet selecionado";
+        this.bulkDeleteBtn.textContent = "\u{1F5D1}\uFE0F Delete Selected (0)";
+        this.bulkSelectionLabel.textContent = "No tweets selected";
       }
     }
     async handleScanTimeline() {
       this.scanBtn.disabled = true;
-      this.scanBtn.textContent = "\u23F3 Varrendo...";
-      this.loggerView.log("Iniciando varredura da timeline aberta...");
+      this.scanBtn.textContent = "\u23F3 Scanning...";
+      this.loggerView.log("Starting scan of open profile timeline...");
       await KeepAwakeService.enable();
       try {
         const tweets = await TimelineScannerService.startScan({
           onProgress: (found) => {
-            this.loggerView.log(`Varredura em andamento: ${found} tweets vis\xEDveis encontrados...`);
+            this.loggerView.log(`Scan in progress: ${found} visible tweets found...`);
           },
           onLog: (msg) => this.loggerView.log(msg)
         });
         this.allTweets = tweets;
         this.syncTweetsToLists();
-        this.loggerView.log(`Varredura conclu\xEDda com sucesso. Total em cache: ${tweets.length}`);
+        this.loggerView.log(`Scan completed successfully. Total in cache: ${tweets.length}`);
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        this.loggerView.log(`[ERRO NA VARREDURA] ${msg}`);
-        alert(`Aten\xE7\xE3o: ${msg}`);
+        this.loggerView.log(`[SCAN ERROR] ${msg}`);
+        alert(`Notice: ${msg}`);
       } finally {
         this.scanBtn.disabled = false;
-        this.scanBtn.textContent = "\u{1F50D} Varrer Perfil";
+        this.scanBtn.textContent = "\u{1F50D} Scan Profile";
         KeepAwakeService.disable();
       }
     }
     async handleDeleteSingle(tweet) {
-      if (!confirm(`Deseja apagar este ${tweet.isRetweet ? "retweet" : "tweet"} permanentemente?
+      if (!confirm(`Are you sure you want to permanently delete this ${tweet.isRetweet ? "retweet" : "tweet"}?
 "${tweet.text.slice(0, 80)}..."`)) {
         return;
       }
       tweet.status = "pending";
       this.syncTweetsToLists();
-      this.loggerView.log(`Iniciando exclus\xE3o individual de ${tweet.id}...`);
+      this.loggerView.log(`Starting single deletion of ${tweet.id}...`);
       const config = this.settingsView.getConfig();
       const res = await DeletionExecutor.execute(tweet, config, { current: 1, total: 1 });
       if (res.success) {
         this.markTweetAsDeleted(tweet.id);
-        this.loggerView.log(`\u2705 Tweet ${tweet.id} exclu\xEDdo com sucesso.`);
+        this.loggerView.log(`\u2705 Tweet ${tweet.id} deleted successfully.`);
       } else {
         tweet.status = "failed";
         tweet.errorMessage = res.error;
         this.syncTweetsToLists();
-        this.loggerView.log(`\u274C Falha ao excluir ${tweet.id}: ${res.error}`);
+        this.loggerView.log(`\u274C Failed to delete ${tweet.id}: ${res.error}`);
       }
       await DomDeleteService.finishSession(false).catch(() => {
       });
@@ -1743,20 +1743,20 @@
     async handleBulkDelete() {
       const selected = this.allTweets.filter((t) => t.selected && t.status !== "success");
       if (selected.length === 0) return;
-      const confirmMsg = `ATEN\xC7\xC3O: A\xE7\xE3o irrevers\xEDvel!
+      const confirmMsg = `WARNING: Irreversible action!
 
-Deseja realmente excluir os ${selected.length} itens selecionados?
+Are you sure you want to permanently delete the ${selected.length} selected items?
 
-(O processo continuar\xE1 rodando em segundo plano mesmo se voc\xEA clicar fora ou minimizar o navegador.)`;
+(The process will continue running in the background even if you click away or minimize the browser.)`;
       if (!confirm(confirmMsg)) return;
       const config = this.settingsView.getConfig();
       this.bulkDeleteBtn.disabled = true;
       this.progressBarView.show();
       this.progressBarView.setPaused(false);
-      this.progressBarView.update(0, selected.length, `Iniciando lote de ${selected.length} itens em segundo plano...`);
+      this.progressBarView.update(0, selected.length, `Starting batch of ${selected.length} items in background...`);
       this.showRunningBanner();
       await KeepAwakeService.enable();
-      this.loggerView.log(`[LOTE EM SEGUNDO PLANO] Enviando ${selected.length} item(ns) para processamento em background...`);
+      this.loggerView.log(`[BACKGROUND BATCH] Dispatching ${selected.length} item(s) to background processor...`);
       const req = {
         type: "START_BATCH_JOB",
         items: this.allTweets,
@@ -1764,15 +1764,15 @@ Deseja realmente excluir os ${selected.length} itens selecionados?
       };
       chrome.runtime.sendMessage(req, (response) => {
         if (chrome.runtime.lastError || !response?.success) {
-          const err = chrome.runtime.lastError?.message || response?.error || "Erro desconhecido ao iniciar lote no background";
-          this.loggerView.log(`\u274C [FALHA AO INICIAR LOTE] ${err}`);
+          const err = chrome.runtime.lastError?.message || response?.error || "Unknown error starting background batch";
+          this.loggerView.log(`\u274C [BATCH START FAILED] ${err}`);
           this.progressBarView.hide();
           this.hideRunningBanner();
           KeepAwakeService.disable();
           this.bulkDeleteBtn.disabled = false;
-          alert(`N\xE3o foi poss\xEDvel iniciar o lote: ${err}`);
+          alert(`Could not start batch: ${err}`);
         } else {
-          this.loggerView.log("\u26A1 Lote iniciado no background. Voc\xEA pode fechar o popup, navegar ou minimizar o navegador com seguran\xE7a!");
+          this.loggerView.log("\u26A1 Batch started in background. You can safely close the popup, browse, or minimize the browser!");
         }
       });
     }

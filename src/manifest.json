@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Tweet & Retweet Purge for X",
+  "name": "Tweet & Retweet Delete for X",
   "version": "1.0.0",
-  "description": "Leia, selecione e apague seus tweets e retweets com separação clara e controle de cadência, sem a API oficial.",
+  "description": "Scan, filter, select, and bulk delete your tweets and retweets with clear separation and safe cadence control, without the official API.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -15,7 +15,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Tweet & Retweet Purge"
+    "default_title": "Tweet & Retweet Delete"
   },
   "side_panel": {
     "default_path": "popup.html"

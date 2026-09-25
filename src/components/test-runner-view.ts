@@ -44,10 +44,10 @@ export class TestRunnerView {
     if (sessionStatusEl) {
       if (session.isLoggedIn) {
         sessionStatusEl.className = 'session-status-badge logged-in';
-        sessionStatusEl.textContent = '🟢 Sessão do X ativa (ct0 detectado)';
+        sessionStatusEl.textContent = '🟢 Active X session (ct0 detected)';
       } else {
         sessionStatusEl.className = 'session-status-badge logged-out';
-        sessionStatusEl.textContent = '🟡 Sessão não detectada (abra o x.com em uma aba)';
+        sessionStatusEl.textContent = '🟡 Session not detected (open x.com in a browser tab)';
       }
     }
   }
@@ -55,14 +55,14 @@ export class TestRunnerView {
   public async executeTest(): Promise<void> {
     const rawInput = this.options.urlInput.value.trim();
     if (!rawInput) {
-      this.showStatus('Informe uma URL ou ID de tweet.', 'error');
+      this.showStatus('Please provide a tweet URL or ID.', 'error');
       return;
     }
 
     // Extrai o ID numérico do tweet
     const match = rawInput.match(/status\/(\d+)/) || rawInput.match(/^(\d+)$/);
     if (!match) {
-      this.showStatus('URL inválida. Não foi possível extrair o ID do tweet.', 'error');
+      this.showStatus('Invalid URL. Could not extract tweet ID.', 'error');
       return;
     }
 
@@ -81,7 +81,7 @@ export class TestRunnerView {
 
     const mockItem: TweetItem = {
       id: tweetId,
-      text: tweetId === '1088925139268526085' ? 'Clima assim é muuuito melhor' : `Tweet de teste ${tweetId}`,
+      text: tweetId === '1088925139268526085' ? 'Clima assim é muuuito melhor' : `Test tweet ${tweetId}`,
       createdAt: new Date().toISOString(),
       isRetweet,
       url: rawInput.startsWith('http') ? rawInput : `https://x.com/i/status/${tweetId}`,
@@ -91,25 +91,25 @@ export class TestRunnerView {
     };
 
     this.options.executeBtn.disabled = true;
-    this.showStatus(`⏳ Iniciando exclusão do tweet ${tweetId} via método ${config.method.toUpperCase()}...`, 'info');
-    this.options.onLog(`[TESTE] Disparando exclusão do tweet ${tweetId} usando método: ${config.method}`);
+    this.showStatus(`⏳ Starting deletion of tweet ${tweetId} via method ${config.method.toUpperCase()}...`, 'info');
+    this.options.onLog(`[TEST] Triggering deletion of tweet ${tweetId} using method: ${config.method}`);
 
     try {
       const result = await DeletionExecutor.execute(mockItem, config, { current: 1, total: 1 });
 
       if (result.success) {
-        this.showStatus(`✅ Tweet ${tweetId} excluído com sucesso! (Código: ${result.statusCode || 200})`, 'success');
-        this.options.onLog(`[TESTE SUCESSO] Tweet ${tweetId} foi apagado.`);
+        this.showStatus(`✅ Tweet ${tweetId} deleted successfully! (Status: ${result.statusCode || 200})`, 'success');
+        this.options.onLog(`[TEST SUCCESS] Tweet ${tweetId} was deleted.`);
         this.options.onSuccess(tweetId);
       } else {
-        const errText = result.error || 'Erro desconhecido durante exclusão.';
-        this.showStatus(`❌ Falha ao excluir tweet: ${errText}`, 'error');
-        this.options.onLog(`[TESTE ERRO] Tweet ${tweetId} falhou: ${errText}`);
+        const errText = result.error || 'Unknown error during deletion.';
+        this.showStatus(`❌ Failed to delete tweet: ${errText}`, 'error');
+        this.options.onLog(`[TEST ERROR] Tweet ${tweetId} failed: ${errText}`);
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.showStatus(`❌ Erro inesperado: ${msg}`, 'error');
-      this.options.onLog(`[TESTE ERRO EXCEÇÃO] ${msg}`);
+      this.showStatus(`❌ Unexpected error: ${msg}`, 'error');
+      this.options.onLog(`[TEST ERROR EXCEPTION] ${msg}`);
     } finally {
       this.options.executeBtn.disabled = false;
       this.checkSession();

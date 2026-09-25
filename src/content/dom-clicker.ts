@@ -312,7 +312,7 @@ export class DomClicker {
             options.current,
             options.total,
             tweetId,
-            candidates.length > 1 ? `Verificando post (${i + 1}/${candidates.length})...` : 'Abrindo menu de opções...'
+            candidates.length > 1 ? `Checking post (${i + 1}/${candidates.length})...` : 'Opening options menu...'
           );
         }
 
@@ -338,7 +338,7 @@ export class DomClicker {
 
         // Encontrou o tweet correto com a opção Excluir!
         if (options?.current && options?.total && tweetId) {
-          AutomationHud.showProgress(options.current, options.total, tweetId, 'Confirmando exclusão...');
+          AutomationHud.showProgress(options.current, options.total, tweetId, 'Confirming deletion...');
         }
 
         this.dispatchSafeClick(deleteItem);
@@ -348,14 +348,14 @@ export class DomClicker {
         const confirmBtn = await this.findConfirmButton();
 
         if (!confirmBtn) {
-          return { success: false, error: 'Botão de confirmação de exclusão não apareceu.' };
+          return { success: false, error: 'Delete confirmation button did not appear.' };
         }
 
         this.dispatchSafeClick(confirmBtn);
         await new Promise((r) => setTimeout(r, 800));
 
         if (options?.current && options?.total && tweetId) {
-          AutomationHud.showProgress(options.current, options.total, tweetId, '✅ Tweet excluído com sucesso.');
+          AutomationHud.showProgress(options.current, options.total, tweetId, '✅ Tweet deleted successfully.');
         }
 
         return { success: true };
@@ -371,7 +371,7 @@ export class DomClicker {
 
       return {
         success: false,
-        error: 'Opção "Excluir" não encontrada no menu dos tweets exibidos (verifique se a conta conectada é a proprietária).'
+        error: 'Delete option not found in menu (verify that the connected account owns this post).'
       };
     } catch (err) {
       return {
@@ -390,7 +390,7 @@ export class DomClicker {
   ): Promise<{ success: boolean; error?: string; alreadyDeleted?: boolean }> {
     try {
       if (options?.current && options?.total && tweetId) {
-        AutomationHud.showProgress(options.current, options.total, tweetId, 'Localizando Retweet...');
+        AutomationHud.showProgress(options.current, options.total, tweetId, 'Locating Retweet...');
       }
 
       await new Promise((r) => setTimeout(r, 600));
@@ -415,7 +415,7 @@ export class DomClicker {
         if (this.isTweetUnavailable()) {
           return { success: true, alreadyDeleted: true };
         }
-        return { success: false, error: `Retweet ${tweetId || ''} não encontrado na página.` };
+        return { success: false, error: `Retweet ${tweetId || ''} not found on page.` };
       }
 
       for (const item of candidates) {
@@ -435,7 +435,7 @@ export class DomClicker {
         await new Promise((r) => setTimeout(r, 400));
 
         if (options?.current && options?.total && tweetId) {
-          AutomationHud.showProgress(options.current, options.total, tweetId, 'Desfazendo Retweet...');
+          AutomationHud.showProgress(options.current, options.total, tweetId, 'Undoing Retweet...');
         }
 
         this.dispatchSafeClick(unretweetBtn);
@@ -454,20 +454,20 @@ export class DomClicker {
             await new Promise((r) => setTimeout(r, 700));
             return { success: true };
           }
-          return { success: false, error: 'Confirmação de desrepublicação não apareceu.' };
+          return { success: false, error: 'Confirmation popup to unretweet did not appear.' };
         }
 
         this.dispatchSafeClick(confirmBtn);
         await new Promise((r) => setTimeout(r, 800));
 
         if (options?.current && options?.total && tweetId) {
-          AutomationHud.showProgress(options.current, options.total, tweetId, '✅ Retweet desfeito com sucesso.');
+          AutomationHud.showProgress(options.current, options.total, tweetId, '✅ Retweet undone successfully.');
         }
 
         return { success: true };
       }
 
-      return { success: false, error: 'Botão de desrepublicar (unretweet) não foi encontrado nos artigos exibidos.' };
+      return { success: false, error: 'Unretweet button was not found in displayed posts.' };
     } catch (err) {
       return {
         success: false,

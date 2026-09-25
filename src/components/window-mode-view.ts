@@ -20,7 +20,7 @@ export class WindowModeView {
   private init(): void {
     const isFullTab = window.innerWidth > 650 || window.location.search.includes('mode=tab');
     if (isFullTab && this.options.modeBadge) {
-      this.options.modeBadge.textContent = '🖥️ Modo Aba Fixa';
+      this.options.modeBadge.textContent = '🖥️ Full Tab Mode';
       this.options.modeBadge.classList.add('visible');
     }
 
@@ -41,10 +41,10 @@ export class WindowModeView {
     const url = chrome.runtime.getURL('popup.html?mode=tab');
     chrome.tabs.create({ url })
       .then(() => {
-        this.options.onLog?.('Extensão aberta em nova aba permanente (não fecha ao clicar fora).');
+        this.options.onLog?.('Extension opened in a permanent full tab (will not close when clicking away).');
       })
       .catch((err) => {
-        console.error('Erro ao abrir aba:', err);
+        console.error('Error opening tab:', err);
       });
   }
 
@@ -57,10 +57,10 @@ export class WindowModeView {
       height: 720
     })
       .then(() => {
-        this.options.onLog?.('Extensão aberta em janela flutuante independente.');
+        this.options.onLog?.('Extension opened in a standalone window.');
       })
       .catch((err) => {
-        console.error('Erro ao abrir janela:', err);
+        console.error('Error opening window:', err);
       });
   }
 }

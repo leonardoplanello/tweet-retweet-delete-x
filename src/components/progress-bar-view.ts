@@ -40,10 +40,10 @@ export class ProgressBarView {
   public update(current: number, total: number, customMessage?: string): void {
     const percent = total > 0 ? Math.round((current / total) * 100) : 0;
     this.options.fillElement.style.width = `${percent}%`;
-    this.options.textElement.textContent = customMessage || `Progresso: ${current} de ${total} (${percent}%)`;
+    this.options.textElement.textContent = customMessage || `Progress: ${current} of ${total} (${percent}%)`;
   }
 
   public setPaused(isPaused: boolean): void {
-    this.options.pauseBtn.textContent = isPaused ? '▶️ Retomar' : '⏸️ Pausar';
+    this.options.pauseBtn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
   }
 }

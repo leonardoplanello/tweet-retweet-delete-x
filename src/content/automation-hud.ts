@@ -18,7 +18,7 @@ export class AutomationHud {
           <span style="font-size: 16px; animation: spin 2s linear infinite; display: inline-block;">⚙️</span>
           <div>
             <div style="font-weight: 700; font-size: 13px; color: #ffffff;">
-              Tweet Purge: Excluindo ${current} de ${total} (${percent}%)
+              Tweet Delete: Deleting ${current} of ${total} (${percent}%)
             </div>
             <div style="font-size: 11px; color: #a0aec0; margin-top: 1px;">
               ${statusText || `Tweet ID: ${tweetId}`}
@@ -26,7 +26,7 @@ export class AutomationHud {
           </div>
         </div>
         <div style="font-size: 10px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.4); white-space: nowrap;">
-          ⚠️ Não feche esta aba
+          ⚠️ Do not close this tab
         </div>
       </div>
       <div style="width: 100%; background: #374151; height: 4px; border-radius: 2px; margin-top: 8px; overflow: hidden;">

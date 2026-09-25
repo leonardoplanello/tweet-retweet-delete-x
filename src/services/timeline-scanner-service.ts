@@ -44,14 +44,14 @@ export class TimelineScannerService {
     const activeTab = tabs[0];
 
     if (!activeTab || !activeTab.id || !activeTab.url || (!activeTab.url.includes('x.com') && !activeTab.url.includes('twitter.com'))) {
-      throw new Error('Abra a página do seu perfil no X (ex: x.com/seu_usuario) antes de iniciar a varredura.');
+      throw new Error('Please open your X profile page (e.g. x.com/your_username) before starting the scan.');
     }
 
     const targetUsername = this.extractUsernameFromUrl(activeTab.url);
     if (targetUsername) {
-      callbacks.onLog(`[VARREDURA] Alvo identificado: @${targetUsername}. Apenas seus posts e retweets serão coletados.`);
+      callbacks.onLog(`[SCAN] Target identified: @${targetUsername}. Only your posts and retweets will be collected.`);
     } else {
-      callbacks.onLog(`[VARREDURA] Iniciando busca de tweets na aba ativa (${activeTab.url})...`);
+      callbacks.onLog(`[SCAN] Starting tweet scan on active tab (${activeTab.url})...`);
     }
 
     // Injeta content script caso ainda não esteja injetado
@@ -74,11 +74,11 @@ export class TimelineScannerService {
           }
           if (response && response.success) {
             const tweets: TweetItem[] = response.tweets || [];
-            callbacks.onLog(`[VARREDURA CONCLUÍDA] Foram identificados ${tweets.length} tweets/retweets válidos pertencentes ao usuário.`);
+            callbacks.onLog(`[SCAN COMPLETED] Identified ${tweets.length} valid tweets/retweets belonging to the user.`);
             const saved = await StorageService.mergeTweets(tweets, targetUsername || undefined);
             resolve(saved);
           } else {
-            reject(new Error(response?.error || 'Falha ao escanear a timeline'));
+            reject(new Error(response?.error || 'Failed to scan timeline'));
           }
         }
       );

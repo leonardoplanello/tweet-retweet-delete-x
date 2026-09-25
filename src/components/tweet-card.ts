@@ -21,9 +21,9 @@ export class TweetCard {
     const badgeClass = tweet.isRetweet ? 'badge-retweet' : 'badge-tweet';
 
     let statusText = '';
-    if (tweet.status === 'pending') statusText = '⏳ Apagando...';
-    else if (tweet.status === 'success') statusText = '✅ Excluído';
-    else if (tweet.status === 'failed') statusText = `❌ Erro: ${tweet.errorMessage || 'Falhou'}`;
+    if (tweet.status === 'pending') statusText = '⏳ Deleting...';
+    else if (tweet.status === 'success') statusText = '✅ Deleted';
+    else if (tweet.status === 'failed') statusText = `❌ Error: ${tweet.errorMessage || 'Failed'}`;
 
     card.innerHTML = `
       <div class="tweet-card-header">
@@ -33,18 +33,18 @@ export class TweetCard {
         </label>
         <span class="badge ${badgeClass}">${badgeType}</span>
         <span class="tweet-date">${dateStr}</span>
-        <a href="${tweet.url}" target="_blank" rel="noopener noreferrer" class="tweet-link" title="Abrir no X">🔗</a>
+        <a href="${tweet.url}" target="_blank" rel="noopener noreferrer" class="tweet-link" title="Open on X">🔗</a>
       </div>
       <div class="tweet-card-body">
-        ${tweet.retweetedFrom ? `<div class="retweet-author">Retweetado de <strong>${tweet.retweetedFrom}</strong></div>` : ''}
-        ${!tweet.isRetweet && tweet.authorHandle ? `<div class="tweet-author-tag" style="font-size: 11px; color: #8899a6; margin-bottom: 4px;">Por <strong>@${tweet.authorHandle}</strong></div>` : ''}
+        ${tweet.retweetedFrom ? `<div class="retweet-author">Retweeted from <strong>${tweet.retweetedFrom}</strong></div>` : ''}
+        ${!tweet.isRetweet && tweet.authorHandle ? `<div class="tweet-author-tag" style="font-size: 11px; color: #8899a6; margin-bottom: 4px;">By <strong>@${tweet.authorHandle}</strong></div>` : ''}
         <div class="tweet-text">${this.escapeHtml(tweet.text)}</div>
         ${statusText ? `<div class="tweet-status-label ${tweet.status}">${statusText}</div>` : ''}
       </div>
       <div class="tweet-card-actions">
         ${
           tweet.status !== 'success' && onDeleteSingle
-            ? `<button type="button" class="btn-single-delete" title="Apagar apenas este">🗑️</button>`
+            ? `<button type="button" class="btn-single-delete" title="Delete only this">🗑️</button>`
             : ''
         }
       </div>
@@ -72,7 +72,7 @@ export class TweetCard {
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
-      return `${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+      return `${d.toLocaleDateString('en-US')} ${d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
     } catch {
       return dateStr;
     }

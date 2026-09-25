@@ -11,10 +11,10 @@ if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-// 1. Template base
+// 1. Base Template
 function getHtmlTemplate(title, tabNavHtml, activeTabContent, bannerHtml = '', footerHtml = '', loggerHtml = '') {
   return `<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <style>
@@ -34,7 +34,6 @@ function getHtmlTemplate(title, tabNavHtml, activeTabContent, bannerHtml = '', f
       border: 1px solid #2f3336;
       border-radius: 8px;
     }
-    /* Estilização refinada para screenshots */
     .session-status-badge.logged-in {
       background-color: rgba(0, 186, 124, 0.18);
       color: #00ba7c;
@@ -50,13 +49,13 @@ function getHtmlTemplate(title, tabNavHtml, activeTabContent, bannerHtml = '', f
     <header class="app-header">
       <div class="header-brand">
         <span class="brand-icon">⚡</span>
-        <h1>Tweet Purge</h1>
+        <h1>Tweet Delete</h1>
       </div>
       <div class="header-actions">
-        <button class="btn-icon" title="Abrir em aba inteira">⤢ Aba</button>
-        <button class="btn-icon" title="Abrir em janela independente">🗗 Janela</button>
+        <button class="btn-icon" title="Open in permanent tab">⤢ Tab</button>
+        <button class="btn-icon" title="Open in standalone window">🗗 Window</button>
         <span class="session-status-badge logged-in">🟢 @leoplanello</span>
-        <button class="btn-primary-sm">🔍 Varrer Perfil</button>
+        <button class="btn-primary-sm">🔍 Scan Profile</button>
       </div>
     </header>
 
@@ -74,10 +73,10 @@ function getHtmlTemplate(title, tabNavHtml, activeTabContent, bannerHtml = '', f
     <footer class="app-footer">
       <div class="action-bar-content">
         <div class="selection-summary">
-          <span id="bulk-selection-label">3 tweets selecionados</span>
+          <span id="bulk-selection-label">3 tweets selected</span>
         </div>
         <button class="btn-danger">
-          🗑️ Apagar Selecionados (3)
+          🗑️ Delete Selected (3)
         </button>
       </div>
     </footer>
@@ -86,10 +85,10 @@ function getHtmlTemplate(title, tabNavHtml, activeTabContent, bannerHtml = '', f
     ${loggerHtml || `
     <aside class="logger-container collapsed">
       <div class="logger-header">
-        <span class="logger-title">📜 Console de Execução</span>
+        <span class="logger-title">📜 Execution Console</span>
         <div class="logger-header-actions">
-          <button class="btn-xs">Limpar</button>
-          <button class="btn-xs">Alternar</button>
+          <button class="btn-xs">Clear</button>
+          <button class="btn-xs">Toggle</button>
         </div>
       </div>
     </aside>
@@ -102,7 +101,7 @@ function getHtmlTemplate(title, tabNavHtml, activeTabContent, bannerHtml = '', f
 // 2. Banner HTML Generator
 function getBannerHtml() {
   return `<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <style>
@@ -178,7 +177,7 @@ function getBannerHtml() {
       font-size: 17px;
       color: #8b98a5;
       margin: 0 auto 28px auto;
-      max-width: 680px;
+      max-width: 720px;
       line-height: 1.5;
     }
     .feature-pills {
@@ -212,21 +211,21 @@ function getBannerHtml() {
     <div class="banner-badge">
       <span>⚡ Chrome Extension Manifest V3</span>
     </div>
-    <h1>Tweet & Retweet Purge for X</h1>
-    <p>Leitura inteligente, filtros finos por data/texto e exclusão em lote com separação estrita de Tweets e Retweets — sem depender da API oficial paga.</p>
+    <h1>Tweet & Retweet Delete for X</h1>
+    <p>Smart timeline scanning, fine filters by date/keyword, and batch deletion with strict separation of Tweets and Retweets — without paying for the official API.</p>
     <div class="feature-pills">
-      <div class="pill"><span class="pill-icon">💬</span> Filtro Preciso de Tweets</div>
-      <div class="pill"><span class="pill-icon">🔁</span> Desfazer Retweets em Massa</div>
-      <div class="pill"><span class="pill-icon">🛡️</span> Fila Resiliente em Segundo Plano</div>
-      <div class="pill"><span class="pill-icon">⏱️</span> Anti-Rate Limit Inteligente</div>
-      <div class="pill"><span class="pill-icon">📁</span> Importador de Arquivo Oficial</div>
+      <div class="pill"><span class="pill-icon">💬</span> Fine Tweet Filters</div>
+      <div class="pill"><span class="pill-icon">🔁</span> Bulk Unretweet</div>
+      <div class="pill"><span class="pill-icon">🛡️</span> Resilient Background Queue</div>
+      <div class="pill"><span class="pill-icon">⏱️</span> Smart Anti-Rate Limit</div>
+      <div class="pill"><span class="pill-icon">📁</span> Official Archive Importer</div>
     </div>
   </div>
 </body>
 </html>`;
 }
 
-// 3. Telas
+// 3. Screens Definitions in English
 const screens = [
   {
     name: 'hero-banner.png',
@@ -243,28 +242,28 @@ const screens = [
       `
       <button class="tab-nav-btn active">💬 Tweets <span class="tab-counter">38</span></button>
       <button class="tab-nav-btn">🔁 Retweets <span class="tab-counter">14</span></button>
-      <button class="tab-nav-btn">🎯 Teste / URL</button>
-      <button class="tab-nav-btn">📁 Arquivo .js</button>
-      <button class="tab-nav-btn">⚙️ Ajustes</button>
+      <button class="tab-nav-btn">🎯 Test / URL</button>
+      <button class="tab-nav-btn">📁 .js Archive</button>
+      <button class="tab-nav-btn">⚙️ Settings</button>
       `,
       `
       <section class="tab-pane active">
         <div class="list-controls">
-          <input type="text" class="search-input" value="projeto" placeholder="Buscar texto no tweet...">
+          <input type="text" class="search-input" value="project" placeholder="Search tweet text...">
           <div class="date-filter-group">
             <input type="date" class="date-input" value="2022-01-01">
-            <span>até</span>
+            <span>to</span>
             <input type="date" class="date-input" value="2024-12-31">
           </div>
           <div class="selection-actions">
-            <button class="btn-subtle">Marcar todos</button>
-            <button class="btn-subtle">Desmarcar</button>
-            <span class="selection-counter">3 de 38 selecionados</span>
+            <button class="btn-subtle">Select all</button>
+            <button class="btn-subtle">Deselect</button>
+            <span class="selection-counter">3 of 38 selected</span>
           </div>
         </div>
 
         <div class="tweets-scroll-container">
-          <!-- Card 1 (Selecionado) -->
+          <!-- Card 1 (Selected) -->
           <div class="tweet-card selected">
             <div class="tweet-card-header">
               <label class="tweet-checkbox-container">
@@ -272,18 +271,18 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">14/10/2023 18:42</span>
+              <span class="tweet-date">10/14/2023 6:42 PM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Iniciando o desenvolvimento da nova arquitetura modular do projeto. Clean architecture e zero dependências pesadas fazem total diferença! 🚀</div>
+              <div class="tweet-text">Starting development on the new modular architecture for this project. Clean architecture and zero heavy dependencies make all the difference! 🚀</div>
             </div>
             <div class="tweet-card-actions">
-              <button class="btn-single-delete" title="Apagar apenas este">🗑️</button>
+              <button class="btn-single-delete" title="Delete only this">🗑️</button>
             </div>
           </div>
 
-          <!-- Card 2 (Selecionado) -->
+          <!-- Card 2 (Selected) -->
           <div class="tweet-card selected">
             <div class="tweet-card-header">
               <label class="tweet-checkbox-container">
@@ -291,18 +290,18 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">09/06/2023 11:15</span>
+              <span class="tweet-date">06/09/2023 11:15 AM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Ajustando alguns testes automatizados antes de subir o deploy para produção. A cobertura de testes salvou o fim de semana.</div>
+              <div class="tweet-text">Fine-tuning automated tests before pushing the production deploy. Test coverage saved the weekend.</div>
             </div>
             <div class="tweet-card-actions">
               <button class="btn-single-delete">🗑️</button>
             </div>
           </div>
 
-          <!-- Card 3 (Não selecionado) -->
+          <!-- Card 3 (Not Selected) -->
           <div class="tweet-card">
             <div class="tweet-card-header">
               <label class="tweet-checkbox-container">
@@ -310,18 +309,18 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">22/02/2022 09:30</span>
+              <span class="tweet-date">02/22/2022 9:30 AM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Estudando novas funcionalidades do Manifest V3 para extensões no Google Chrome. Muita coisa mudou com os service workers!</div>
+              <div class="tweet-text">Studying new Manifest V3 features for Google Chrome extensions. The transition to service workers changes a lot!</div>
             </div>
             <div class="tweet-card-actions">
               <button class="btn-single-delete">🗑️</button>
             </div>
           </div>
 
-          <!-- Card 4 (Já apagado) -->
+          <!-- Card 4 (Already Deleted) -->
           <div class="tweet-card success">
             <div class="tweet-card-header">
               <label class="tweet-checkbox-container">
@@ -329,12 +328,12 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">10/01/2022 14:05</span>
+              <span class="tweet-date">01/10/2022 2:05 PM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Testando endpoint de mutação no X.</div>
-              <div class="tweet-status-label success">✅ Excluído com sucesso</div>
+              <div class="tweet-text">Testing mutation endpoint on X.</div>
+              <div class="tweet-status-label success">✅ Deleted successfully</div>
             </div>
           </div>
         </div>
@@ -351,23 +350,23 @@ const screens = [
       `
       <button class="tab-nav-btn">💬 Tweets <span class="tab-counter">38</span></button>
       <button class="tab-nav-btn active">🔁 Retweets <span class="tab-counter">14</span></button>
-      <button class="tab-nav-btn">🎯 Teste / URL</button>
-      <button class="tab-nav-btn">📁 Arquivo .js</button>
-      <button class="tab-nav-btn">⚙️ Ajustes</button>
+      <button class="tab-nav-btn">🎯 Test / URL</button>
+      <button class="tab-nav-btn">📁 .js Archive</button>
+      <button class="tab-nav-btn">⚙️ Settings</button>
       `,
       `
       <section class="tab-pane active">
         <div class="list-controls">
-          <input type="text" class="search-input" placeholder="Buscar texto ou autor retweetado...">
+          <input type="text" class="search-input" placeholder="Search text or retweeted author...">
           <div class="date-filter-group">
             <input type="date" class="date-input">
-            <span>até</span>
+            <span>to</span>
             <input type="date" class="date-input">
           </div>
           <div class="selection-actions">
-            <button class="btn-subtle">Marcar todos</button>
-            <button class="btn-subtle">Desmarcar</button>
-            <span class="selection-counter">2 de 14 selecionados</span>
+            <button class="btn-subtle">Select all</button>
+            <button class="btn-subtle">Deselect</button>
+            <span class="selection-counter">2 of 14 selected</span>
           </div>
         </div>
 
@@ -380,15 +379,15 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-retweet">🔁 Retweet</span>
-              <span class="tweet-date">18/08/2024 16:20</span>
+              <span class="tweet-date">08/18/2024 4:20 PM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="retweet-author">Retweetado de <strong>@paulg</strong></div>
+              <div class="retweet-author">Retweeted from <strong>@paulg</strong></div>
               <div class="tweet-text">The most impressive people I know are not the ones who never fail, but the ones who iterate tenaciously until they find something that works.</div>
             </div>
             <div class="tweet-card-actions">
-              <button class="btn-single-delete" title="Desfazer Retweet">🗑️</button>
+              <button class="btn-single-delete" title="Undo Retweet">🗑️</button>
             </div>
           </div>
 
@@ -400,12 +399,12 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-retweet">🔁 Retweet</span>
-              <span class="tweet-date">02/05/2023 21:05</span>
+              <span class="tweet-date">05/02/2023 9:05 PM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="retweet-author">Retweetado de <strong>@sama</strong></div>
-              <div class="tweet-text">the future will be shaped by the people who build things rather than the people who talk about building things.</div>
+              <div class="retweet-author">Retweeted from <strong>@sama</strong></div>
+              <div class="tweet-text">The future will be shaped by the people who build things rather than the people who talk about building things.</div>
             </div>
             <div class="tweet-card-actions">
               <button class="btn-single-delete">🗑️</button>
@@ -420,11 +419,11 @@ const screens = [
                 <span class="checkmark"></span>
               </label>
               <span class="badge badge-retweet">🔁 Retweet</span>
-              <span class="tweet-date">15/11/2021 12:45</span>
+              <span class="tweet-date">11/15/2021 12:45 PM</span>
               <a href="#" class="tweet-link">🔗</a>
             </div>
             <div class="tweet-card-body">
-              <div class="retweet-author">Retweetado de <strong>@github</strong></div>
+              <div class="retweet-author">Retweeted from <strong>@github</strong></div>
               <div class="tweet-text">Did you know? You can customize your profile README with live GitHub actions and pinned projects.</div>
             </div>
             <div class="tweet-card-actions">
@@ -439,10 +438,10 @@ const screens = [
       <footer class="app-footer">
         <div class="action-bar-content">
           <div class="selection-summary">
-            <span>2 retweets selecionados</span>
+            <span>2 retweets selected</span>
           </div>
           <button class="btn-danger">
-            🔁 Desfazer Retweets (2)
+            🔁 Undo Retweets (2)
           </button>
         </div>
       </footer>
@@ -458,52 +457,52 @@ const screens = [
       `
       <button class="tab-nav-btn">💬 Tweets <span class="tab-counter">38</span></button>
       <button class="tab-nav-btn">🔁 Retweets <span class="tab-counter">14</span></button>
-      <button class="tab-nav-btn active">🎯 Teste / URL</button>
-      <button class="tab-nav-btn">📁 Arquivo .js</button>
-      <button class="tab-nav-btn">⚙️ Ajustes</button>
+      <button class="tab-nav-btn active">🎯 Test / URL</button>
+      <button class="tab-nav-btn">📁 .js Archive</button>
+      <button class="tab-nav-btn">⚙️ Settings</button>
       `,
       `
       <section class="tab-pane active">
         <div class="test-runner-panel">
           <div class="test-header">
-            <h3>Exclusão Direta / Tweet de Teste</h3>
-            <p class="section-desc">Exclua um tweet específico informando sua URL ou ID diretamente sem precisar varrer a timeline.</p>
+            <h3>Direct Deletion / Test Tweet</h3>
+            <p class="section-desc">Delete a specific tweet by providing its URL or ID directly without needing to scan your timeline.</p>
           </div>
 
           <div class="test-tweet-preview-box">
-            <div class="preview-title">Tweet alvo de teste:</div>
+            <div class="preview-title">Target test tweet:</div>
             <div class="preview-url">https://x.com/leoplanello/status/1088925139268526085</div>
             <div class="preview-quote">"Clima assim é muuuito melhor"</div>
           </div>
 
           <div class="form-group">
-            <label for="test-url-input">URL ou ID do Tweet:</label>
+            <label for="test-url-input">Tweet URL or ID:</label>
             <input type="text" class="text-input" value="https://x.com/leoplanello/status/1088925139268526085">
           </div>
 
           <div class="form-row">
             <div class="form-group half">
-              <label for="test-method-select">Método de Exclusão:</label>
+              <label for="test-method-select">Deletion Method:</label>
               <select class="select-input">
-                <option selected>Navegação Direta na UI (Recomendado)</option>
-                <option>Híbrido (GraphQL com fallback DOM)</option>
-                <option>GraphQL / REST Interno</option>
+                <option selected>Direct UI Navigation (Recommended)</option>
+                <option>Hybrid (GraphQL with DOM fallback)</option>
+                <option>Internal GraphQL / REST</option>
               </select>
             </div>
             <div class="form-group half checkbox-group" style="padding-top: 20px;">
               <label>
                 <input type="checkbox">
-                É um Retweet (Unretweet)
+                Is a Retweet (Unretweet)
               </label>
             </div>
           </div>
 
           <button class="btn-danger-lg" style="margin-top: 8px;">
-            🗑️ Apagar Este Tweet Agora
+            🗑️ Delete This Tweet Now
           </button>
 
           <div class="test-status-output success" style="display: block; margin-top: 12px;">
-            ✅ Sucesso: O tweet foi localizado e excluído com confirmação visual no X!
+            ✅ Success: Post located and confirmed deleted via DOM automation on X!
           </div>
         </div>
       </section>
@@ -519,36 +518,36 @@ const screens = [
       `
       <button class="tab-nav-btn">💬 Tweets <span class="tab-counter">38</span></button>
       <button class="tab-nav-btn">🔁 Retweets <span class="tab-counter">14</span></button>
-      <button class="tab-nav-btn">🎯 Teste / URL</button>
-      <button class="tab-nav-btn active">📁 Arquivo .js</button>
-      <button class="tab-nav-btn">⚙️ Ajustes</button>
+      <button class="tab-nav-btn">🎯 Test / URL</button>
+      <button class="tab-nav-btn active">📁 .js Archive</button>
+      <button class="tab-nav-btn">⚙️ Settings</button>
       `,
       `
       <section class="tab-pane active">
         <div class="archive-panel">
-          <h3>Carregar Twitter Archive Oficial</h3>
+          <h3>Load Official Twitter Archive</h3>
           <p class="section-desc">
-            O X exibe apenas até 3.200 tweets no perfil da web. Para apagar todo o histórico ilimitado da sua conta, importe o arquivo <code>tweets.js</code> exportado pelo X.
+            X only displays up to 3,200 tweets on web profiles. To delete your entire account history, import the official <code>tweets.js</code> file exported from X.
           </p>
 
           <div class="dropzone drag-over">
             <span class="dropzone-icon">📁</span>
             <div class="dropzone-text">
-              <strong>Arquivo carregado: tweets.js</strong>
-              <span style="color: #00ba7c; font-weight: 600;">✓ 4.820 tweets e 930 retweets indexados com sucesso!</span>
+              <strong>File loaded: tweets.js</strong>
+              <span style="color: #00ba7c; font-weight: 600;">✓ 4,820 tweets and 930 retweets indexed successfully!</span>
             </div>
           </div>
 
           <div class="archive-status success" style="display: block;">
-            🎉 Sucesso! 5.750 postagens carregadas na memória local prontas para filtragem e exclusão.
+            🎉 Success! 5,750 posts loaded into local memory ready for filtering and batch deletion.
           </div>
 
           <div class="archive-instructions">
-            <h4>Como obter seus dados do X:</h4>
+            <h4>How to download your archive from X:</h4>
             <ol>
-              <li>No X, acesse <em>Mais &gt; Configurações e privacidade &gt; Sua conta &gt; Baixar um arquivo com seus dados</em>.</li>
-              <li>Aguarde o e-mail de confirmação do X e baixe o arquivo <code>.zip</code>.</li>
-              <li>Descompacte o arquivo, abra a pasta <code>data/</code> e arraste o arquivo <code>tweets.js</code> aqui.</li>
+              <li>On X, navigate to <em>More &gt; Settings and privacy &gt; Your account &gt; Download an archive of your data</em>.</li>
+              <li>Wait for confirmation email from X and download the <code>.zip</code> file.</li>
+              <li>Extract the archive, open the <code>data/</code> folder, and drag <code>tweets.js</code> here.</li>
             </ol>
           </div>
         </div>
@@ -565,31 +564,31 @@ const screens = [
       `
       <button class="tab-nav-btn">💬 Tweets <span class="tab-counter">38</span></button>
       <button class="tab-nav-btn">🔁 Retweets <span class="tab-counter">14</span></button>
-      <button class="tab-nav-btn">🎯 Teste / URL</button>
-      <button class="tab-nav-btn">📁 Arquivo .js</button>
-      <button class="tab-nav-btn active">⚙️ Ajustes</button>
+      <button class="tab-nav-btn">🎯 Test / URL</button>
+      <button class="tab-nav-btn">📁 .js Archive</button>
+      <button class="tab-nav-btn active">⚙️ Settings</button>
       `,
       `
       <section class="tab-pane active">
         <div class="settings-panel">
-          <h3>Configurações de Exclusão</h3>
+          <h3>Deletion Settings</h3>
 
           <div class="form-group">
-            <label>Método Padrão:</label>
+            <label>Default Method:</label>
             <select class="select-input">
-              <option selected>Navegação Direta na UI (Recomendado - 100% Funcional)</option>
-              <option>Híbrido (GraphQL + Fallback UI)</option>
-              <option>GraphQL / REST Interno (Experimental)</option>
+              <option selected>Direct UI Navigation (Recommended - 100% Functional)</option>
+              <option>Hybrid (GraphQL + UI Fallback)</option>
+              <option>Internal GraphQL / REST (Experimental)</option>
             </select>
           </div>
 
           <div class="form-row">
             <div class="form-group half">
-              <label>Atraso Mínimo (ms):</label>
+              <label>Min Delay (ms):</label>
               <input type="number" class="text-input" value="1500">
             </div>
             <div class="form-group half">
-              <label>Atraso Máximo (ms):</label>
+              <label>Max Delay (ms):</label>
               <input type="number" class="text-input" value="3000">
             </div>
           </div>
@@ -597,27 +596,27 @@ const screens = [
           <div class="form-group checkbox-group">
             <label>
               <input type="checkbox" checked>
-              Pausa automática de segurança se atingir Rate Limit (HTTP 429)
+              Automatic safety pause on Rate Limit (HTTP 429)
             </label>
           </div>
 
           <div class="form-group">
-            <label>Tempo de Cooldown após Rate Limit (segundos):</label>
+            <label>Cooldown Time after Rate Limit (seconds):</label>
             <input type="number" class="text-input" value="60">
           </div>
 
           <div class="background-mode-info">
-            <h4>💡 Execução em Segundo Plano & Janela Fixa</h4>
-            <p>A exclusão é executada no Service Worker em segundo plano. Mesmo fechando este popup ou minimizando o Chrome, a fila continua sem interrupções.</p>
+            <h4>💡 Background Execution & Persistent Window</h4>
+            <p>Deletion is executed in the Background Service Worker. Even if you close this popup or minimize Chrome, the queue continues processing uninterrupted.</p>
             <div class="window-action-buttons">
-              <button class="btn-subtle">⤢ Abrir em Aba Permanente</button>
-              <button class="btn-subtle">🗗 Abrir em Janela Própria</button>
+              <button class="btn-subtle">⤢ Open in Permanent Tab</button>
+              <button class="btn-subtle">🗗 Open in Standalone Window</button>
             </div>
           </div>
 
           <div class="settings-actions" style="margin-top: 10px;">
-            <button class="btn-subtle-danger">Limpar Tweets em Cache Local</button>
-            <span class="save-feedback visible">Configurações salvas!</span>
+            <button class="btn-subtle-danger">Clear Local Cached Tweets</button>
+            <span class="save-feedback visible">Settings saved!</span>
           </div>
         </div>
       </section>
@@ -633,46 +632,46 @@ const screens = [
       `
       <button class="tab-nav-btn active">💬 Tweets <span class="tab-counter">38</span></button>
       <button class="tab-nav-btn">🔁 Retweets <span class="tab-counter">14</span></button>
-      <button class="tab-nav-btn">🎯 Teste / URL</button>
-      <button class="tab-nav-btn">📁 Arquivo .js</button>
-      <button class="tab-nav-btn">⚙️ Ajustes</button>
+      <button class="tab-nav-btn">🎯 Test / URL</button>
+      <button class="tab-nav-btn">📁 .js Archive</button>
+      <button class="tab-nav-btn">⚙️ Settings</button>
       `,
       `
       <section class="tab-pane active">
         <div class="tweets-scroll-container">
-          <!-- Card Excluído 1 -->
+          <!-- Deleted Card 1 -->
           <div class="tweet-card success">
             <div class="tweet-card-header">
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">12/03/2023 10:14</span>
+              <span class="tweet-date">03/12/2023 10:14 AM</span>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Finalizando refatoração da camada de dados do projeto.</div>
-              <div class="tweet-status-label success">✅ Excluído com sucesso</div>
+              <div class="tweet-text">Finishing data layer refactoring for the project.</div>
+              <div class="tweet-status-label success">✅ Deleted successfully</div>
             </div>
           </div>
 
-          <!-- Card Excluído 2 -->
+          <!-- Deleted Card 2 -->
           <div class="tweet-card success">
             <div class="tweet-card-header">
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">11/03/2023 22:50</span>
+              <span class="tweet-date">03/11/2023 10:50 PM</span>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Testando integração contínua no GitHub Actions.</div>
-              <div class="tweet-status-label success">✅ Excluído com sucesso</div>
+              <div class="tweet-text">Testing continuous integration in GitHub Actions.</div>
+              <div class="tweet-status-label success">✅ Deleted successfully</div>
             </div>
           </div>
 
-          <!-- Card Atualmente em Exclusão -->
+          <!-- Currently Deleting Card -->
           <div class="tweet-card selected" style="border-color: #1d9bf0;">
             <div class="tweet-card-header">
               <span class="badge badge-tweet">💬 Tweet</span>
-              <span class="tweet-date">10/03/2023 15:30</span>
+              <span class="tweet-date">03/10/2023 3:30 PM</span>
             </div>
             <div class="tweet-card-body">
-              <div class="tweet-text">Configurando regras de rate limiting e delay randômico.</div>
-              <div class="tweet-status-label pending">⏳ Apagando... (Aguardando confirmação DOM)</div>
+              <div class="tweet-text">Configuring rate limiting rules and randomized delays.</div>
+              <div class="tweet-status-label pending">⏳ Deleting... (Waiting for DOM confirmation)</div>
             </div>
           </div>
         </div>
@@ -681,7 +680,7 @@ const screens = [
       `
       <div class="bg-running-banner">
         <span class="pulse-dot"></span>
-        <span>Executando em segundo plano. Você pode clicar fora ou minimizar com segurança.</span>
+        <span>Running in background. You can safely click away or minimize.</span>
       </div>
       `,
       `
@@ -691,19 +690,19 @@ const screens = [
             <div class="progress-bar-fill" style="width: 68%;"></div>
           </div>
           <div class="progress-info">
-            <span>Processando: 34 de 50 tweets (68%)</span>
+            <span>Processing: 34 of 50 tweets (68%)</span>
             <div class="progress-buttons">
-              <button class="btn-xs">⏸️ Pausar</button>
-              <button class="btn-xs btn-danger">❌ Cancelar</button>
+              <button class="btn-xs">⏸️ Pause</button>
+              <button class="btn-xs btn-danger">❌ Cancel</button>
             </div>
           </div>
         </div>
         <div class="action-bar-content">
           <div class="selection-summary">
-            <span>Cadência segura: 2.1s entre requisições</span>
+            <span>Safe cadence: 2.1s between requests</span>
           </div>
           <button class="btn-danger" disabled style="opacity: 0.6;">
-            ⏳ Em Andamento...
+            ⏳ In Progress...
           </button>
         </div>
       </footer>
@@ -711,18 +710,18 @@ const screens = [
       `
       <aside class="logger-container">
         <div class="logger-header">
-          <span class="logger-title">📜 Console de Execução</span>
+          <span class="logger-title">📜 Execution Console</span>
           <div class="logger-header-actions">
-            <button class="btn-xs">Limpar</button>
-            <button class="btn-xs">Alternar</button>
+            <button class="btn-xs">Clear</button>
+            <button class="btn-xs">Toggle</button>
           </div>
         </div>
         <div class="logger-output" style="display: block;">
-          <div class="log-line" style="color: #1d9bf0;">[22:15:02] [BackgroundJob] Iniciando lote com 50 itens...</div>
-          <div class="log-line" style="color: #00ba7c;">[22:15:04] [DOM] Tweet 163459... excluído com sucesso!</div>
-          <div class="log-line" style="color: #8b98a5;">[22:15:06] [Cadence] Aguardando intervalo de 2.180ms...</div>
-          <div class="log-line" style="color: #00ba7c;">[22:15:09] [DOM] Tweet 163462... excluído com sucesso!</div>
-          <div class="log-line" style="color: #1d9bf0;">[22:15:11] [DOM] Localizando caret no menu do tweet 163470...</div>
+          <div class="log-line" style="color: #1d9bf0;">[22:15:02] [BackgroundJob] Starting batch with 50 items...</div>
+          <div class="log-line" style="color: #00ba7c;">[22:15:04] [DOM] Tweet 163459... deleted successfully!</div>
+          <div class="log-line" style="color: #8b98a5;">[22:15:06] [Cadence] Waiting safe delay of 2,180ms...</div>
+          <div class="log-line" style="color: #00ba7c;">[22:15:09] [DOM] Tweet 163462... deleted successfully!</div>
+          <div class="log-line" style="color: #1d9bf0;">[22:15:11] [DOM] Locating caret menu for tweet 163470...</div>
         </div>
       </aside>
       `
@@ -735,7 +734,7 @@ if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
 }
 
-console.log('Gerando capturas de tela via Headless Chrome...');
+console.log('Generating high-res screenshots via Headless Chrome in English...');
 
 for (const sc of screens) {
   const tempHtmlPath = path.join(tempDir, `${sc.name}.html`);
@@ -747,13 +746,13 @@ for (const sc of screens) {
   const cmd = `"${CHROME_PATH}" --headless=new --screenshot="${outPngPath}" --window-size=${sc.width},${sc.height} --hide-scrollbars "${fileUrl}"`;
   try {
     execSync(cmd, { stdio: 'pipe' });
-    console.log(`✓ Gerado: ${sc.name} (${sc.width}x${sc.height})`);
+    console.log(`✓ Generated: ${sc.name} (${sc.width}x${sc.height})`);
   } catch (err) {
-    console.error(`Erro ao gerar ${sc.name}:`, err.message);
+    console.error(`Error generating ${sc.name}:`, err.message);
   }
 }
 
-// Limpeza de arquivos temporários
+// Cleanup
 try {
   const tempFiles = fs.readdirSync(tempDir);
   for (const f of tempFiles) {
@@ -761,7 +760,7 @@ try {
   }
   fs.rmdirSync(tempDir);
 } catch {
-  // Ignora
+  // Ignore
 }
 
-console.log('Todas as capturas de tela foram salvas com sucesso em docs/screenshots/!');
+console.log('All screenshots saved successfully in English to docs/screenshots/!');

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tweet Purge & Manager</title>
+  <title>Tweet & Retweet Delete</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -12,23 +12,23 @@
     <header class="app-header">
       <div class="header-brand">
         <span class="brand-icon">⚡</span>
-        <h1>Tweet Purge</h1>
+        <h1>Tweet Delete</h1>
       </div>
       <div class="header-actions">
-        <button id="btn-open-tab" class="btn-icon" title="Abrir em aba inteira permanente (não fecha ao clicar fora)">⤢ Aba</button>
-        <button id="btn-open-window" class="btn-icon" title="Abrir em janela independente">🗗 Janela</button>
+        <button id="btn-open-tab" class="btn-icon" title="Open in permanent full tab (will not close on click outside)">⤢ Tab</button>
+        <button id="btn-open-window" class="btn-icon" title="Open in standalone window">🗗 Window</button>
         <span id="mode-badge" class="mode-badge" style="display: none;"></span>
-        <span id="session-badge" class="session-status-badge logged-out" title="Status de login no X">Verificando sessão...</span>
-        <button id="btn-scan-timeline" class="btn-primary-sm" title="Varrer tweets da página aberta do seu perfil no X">
-          🔍 Varrer Perfil
+        <span id="session-badge" class="session-status-badge logged-out" title="X session login status">Checking session...</span>
+        <button id="btn-scan-timeline" class="btn-primary-sm" title="Scan tweets from your open profile page on X">
+          🔍 Scan Profile
         </button>
       </div>
     </header>
 
-    <!-- Banner Informativo de Processamento em Segundo Plano -->
+    <!-- Background Processing Info Banner -->
     <div id="bg-running-banner" class="bg-running-banner" style="display: none;">
       <span class="pulse-dot"></span>
-      <span id="bg-running-text">Executando em segundo plano. Você pode clicar fora ou minimizar com segurança.</span>
+      <span id="bg-running-text">Running in background. You can safely click away or minimize.</span>
     </div>
 
     <!-- Tab Navigation -->
@@ -40,111 +40,111 @@
         🔁 Retweets <span id="badge-rts-count" class="tab-counter">0</span>
       </button>
       <button class="tab-nav-btn" data-tab="tab-test">
-        🎯 Teste / URL
+        🎯 Test / URL
       </button>
       <button class="tab-nav-btn" data-tab="tab-archive">
-        📁 Arquivo .js
+        📁 .js Archive
       </button>
       <button class="tab-nav-btn" data-tab="tab-settings">
-        ⚙️ Ajustes
+        ⚙️ Settings
       </button>
     </nav>
 
     <!-- Main Content Area with Panes -->
     <main class="app-main">
-      <!-- Aba Tweets -->
+      <!-- Tweets Tab -->
       <section id="tab-tweets" class="tab-pane active">
         <div class="list-controls">
-          <input type="text" id="tweets-filter-input" class="search-input" placeholder="Buscar texto no tweet...">
+          <input type="text" id="tweets-filter-input" class="search-input" placeholder="Search tweet text...">
           <div class="date-filter-group">
-            <input type="date" id="tweets-date-start" class="date-input" title="A partir desta data">
-            <span>até</span>
-            <input type="date" id="tweets-date-end" class="date-input" title="Até esta data">
+            <input type="date" id="tweets-date-start" class="date-input" title="From date">
+            <span>to</span>
+            <input type="date" id="tweets-date-end" class="date-input" title="To date">
           </div>
           <div class="selection-actions">
-            <button id="tweets-select-all" class="btn-subtle">Marcar todos</button>
-            <button id="tweets-deselect-all" class="btn-subtle">Desmarcar</button>
-            <span id="tweets-selection-counter" class="selection-counter">0 selecionados</span>
+            <button id="tweets-select-all" class="btn-subtle">Select all</button>
+            <button id="tweets-deselect-all" class="btn-subtle">Deselect</button>
+            <span id="tweets-selection-counter" class="selection-counter">0 selected</span>
           </div>
         </div>
         <div id="tweets-list-container" class="tweets-scroll-container"></div>
       </section>
 
-      <!-- Aba Retweets -->
+      <!-- Retweets Tab -->
       <section id="tab-retweets" class="tab-pane">
         <div class="list-controls">
-          <input type="text" id="rts-filter-input" class="search-input" placeholder="Buscar texto ou autor...">
+          <input type="text" id="rts-filter-input" class="search-input" placeholder="Search text or author...">
           <div class="date-filter-group">
-            <input type="date" id="rts-date-start" class="date-input" title="A partir desta data">
-            <span>até</span>
-            <input type="date" id="rts-date-end" class="date-input" title="Até esta data">
+            <input type="date" id="rts-date-start" class="date-input" title="From date">
+            <span>to</span>
+            <input type="date" id="rts-date-end" class="date-input" title="To date">
           </div>
           <div class="selection-actions">
-            <button id="rts-select-all" class="btn-subtle">Marcar todos</button>
-            <button id="rts-deselect-all" class="btn-subtle">Desmarcar</button>
-            <span id="rts-selection-counter" class="selection-counter">0 selecionados</span>
+            <button id="rts-select-all" class="btn-subtle">Select all</button>
+            <button id="rts-deselect-all" class="btn-subtle">Deselect</button>
+            <span id="rts-selection-counter" class="selection-counter">0 selected</span>
           </div>
         </div>
         <div id="rts-list-container" class="tweets-scroll-container"></div>
       </section>
 
-      <!-- Aba Teste / URL Direta -->
+      <!-- Test / Direct URL Tab -->
       <section id="tab-test" class="tab-pane">
         <div class="test-runner-panel">
           <div class="test-header">
-            <h3>Exclusão Direta / Tweet de Teste</h3>
-            <p class="section-desc">Exclua um tweet específico informando sua URL ou ID diretamente.</p>
+            <h3>Direct Deletion / Test Tweet</h3>
+            <p class="section-desc">Delete a specific tweet by providing its URL or ID directly.</p>
           </div>
 
           <div class="test-tweet-preview-box">
-            <div class="preview-title">Tweet alvo de teste:</div>
+            <div class="preview-title">Target test tweet:</div>
             <div class="preview-url">https://x.com/leoplanello/status/1088925139268526085</div>
             <div class="preview-quote">"Clima assim é muuuito melhor"</div>
           </div>
 
           <div class="form-group">
-            <label for="test-url-input">URL ou ID do Tweet:</label>
-            <input type="text" id="test-url-input" class="text-input" value="https://x.com/leoplanello/status/1088925139268526085" placeholder="https://x.com/usuario/status/...">
+            <label for="test-url-input">Tweet URL or ID:</label>
+            <input type="text" id="test-url-input" class="text-input" value="https://x.com/leoplanello/status/1088925139268526085" placeholder="https://x.com/user/status/...">
           </div>
 
           <div class="form-row">
             <div class="form-group half">
-              <label for="test-method-select">Método de Exclusão:</label>
+              <label for="test-method-select">Deletion Method:</label>
               <select id="test-method-select" class="select-input">
-                <option value="dom" selected>Navegação Direta na UI (Recomendado)</option>
-                <option value="hybrid">Híbrido (GraphQL com fallback DOM)</option>
-                <option value="graphql">GraphQL / REST Interno</option>
+                <option value="dom" selected>Direct UI Navigation (Recommended)</option>
+                <option value="hybrid">Hybrid (GraphQL with DOM fallback)</option>
+                <option value="graphql">Internal GraphQL / REST</option>
               </select>
             </div>
             <div class="form-group half checkbox-group">
               <label>
                 <input type="checkbox" id="test-is-retweet">
-                É um Retweet (Unretweet)
+                Is a Retweet (Unretweet)
               </label>
             </div>
           </div>
 
           <button id="btn-run-test-delete" class="btn-danger-lg">
-            🗑️ Apagar Este Tweet Agora
+            🗑️ Delete This Tweet Now
           </button>
 
           <div id="test-status-output" class="test-status-output"></div>
         </div>
       </section>
 
-      <!-- Aba Arquivo Twitter Archive -->
+      <!-- Twitter Archive Tab -->
       <section id="tab-archive" class="tab-pane">
         <div class="archive-panel">
-          <h3>Carregar Twitter Archive Oficial</h3>
+          <h3>Load Official Twitter Archive</h3>
           <p class="section-desc">
-            O X só exibe até 3.200 tweets no perfil. Para apagar todo o histórico ilimitado da sua conta, importe o arquivo <code>tweets.js</code> exportado do X.
+            X only displays up to 3,200 tweets on web profiles. To delete your entire account history, import the official <code>tweets.js</code> file exported from X.
           </p>
 
           <div id="archive-dropzone" class="dropzone">
             <span class="dropzone-icon">📁</span>
             <div class="dropzone-text">
-              <strong>Arraste o arquivo tweets.js aqui</strong>
-              <span>ou clique para selecionar do computador</span>
+              <strong>Drag and drop tweets.js here</strong>
+              <span>or click to select from your computer</span>
             </div>
             <input type="file" id="archive-file-input" accept=".js,.json" style="display: none;">
           </div>
@@ -152,37 +152,37 @@
           <div id="archive-status" class="archive-status"></div>
 
           <div class="archive-instructions">
-            <h4>Como obter seus dados do X:</h4>
+            <h4>How to download your archive from X:</h4>
             <ol>
-              <li>No X, vá em <em>Mais &gt; Configurações e privacidade &gt; Sua conta &gt; Baixar um arquivo com seus dados</em>.</li>
-              <li>Aguarde o e-mail do X e extraia o arquivo <code>.zip</code>.</li>
-              <li>Entre na pasta <code>data/</code> e selecione o arquivo <code>tweets.js</code>.</li>
+              <li>On X, go to <em>More &gt; Settings and privacy &gt; Your account &gt; Download an archive of your data</em>.</li>
+              <li>Wait for the confirmation email from X and extract the <code>.zip</code> file.</li>
+              <li>Open the <code>data/</code> folder and select the <code>tweets.js</code> file.</li>
             </ol>
           </div>
         </div>
       </section>
 
-      <!-- Aba Ajustes -->
+      <!-- Settings Tab -->
       <section id="tab-settings" class="tab-pane">
         <div class="settings-panel">
-          <h3>Configurações de Exclusão</h3>
+          <h3>Deletion Settings</h3>
 
           <div class="form-group">
-            <label for="settings-method">Método Padrão:</label>
+            <label for="settings-method">Default Method:</label>
             <select id="settings-method" class="select-input">
-              <option value="dom" selected>Navegação Direta na UI (Recomendado - 100% Funcional)</option>
-              <option value="hybrid">Híbrido (GraphQL + Fallback UI)</option>
-              <option value="graphql">GraphQL / REST Interno (Experimental)</option>
+              <option value="dom" selected>Direct UI Navigation (Recommended - 100% Functional)</option>
+              <option value="hybrid">Hybrid (GraphQL + UI Fallback)</option>
+              <option value="graphql">Internal GraphQL / REST (Experimental)</option>
             </select>
           </div>
 
           <div class="form-row">
             <div class="form-group half">
-              <label for="settings-min-delay">Atraso Mínimo (ms):</label>
+              <label for="settings-min-delay">Min Delay (ms):</label>
               <input type="number" id="settings-min-delay" class="text-input" value="1500" min="200" step="100">
             </div>
             <div class="form-group half">
-              <label for="settings-max-delay">Atraso Máximo (ms):</label>
+              <label for="settings-max-delay">Max Delay (ms):</label>
               <input type="number" id="settings-max-delay" class="text-input" value="3000" min="500" step="100">
             </div>
           </div>
@@ -190,32 +190,32 @@
           <div class="form-group checkbox-group">
             <label>
               <input type="checkbox" id="settings-auto-pause" checked>
-              Pausa automática de segurança se atingir Rate Limit (HTTP 429)
+              Automatic safety pause on Rate Limit (HTTP 429)
             </label>
           </div>
 
           <div class="form-group">
-            <label for="settings-cooldown">Tempo de Cooldown após Rate Limit (segundos):</label>
+            <label for="settings-cooldown">Cooldown Time after Rate Limit (seconds):</label>
             <input type="number" id="settings-cooldown" class="text-input" value="60" min="10" step="5">
           </div>
 
           <div class="form-group">
-            <label for="settings-query-id">QueryID customizado para DeleteTweet (opcional):</label>
-            <input type="text" id="settings-query-id" class="text-input" placeholder="Deixe em branco para usar IDs automáticos">
+            <label for="settings-query-id">Custom QueryID for DeleteTweet (optional):</label>
+            <input type="text" id="settings-query-id" class="text-input" placeholder="Leave empty to use automatic QueryIDs">
           </div>
 
           <div class="background-mode-info">
-            <h4>💡 Execução em Segundo Plano & Janela Fixa</h4>
-            <p>A exclusão é executada no Service Worker em segundo plano. Mesmo fechando este popup, alternando de tela ou minimizando o Chrome, a fila continuará sendo processada.</p>
+            <h4>💡 Background Execution & Persistent Window</h4>
+            <p>Deletion is executed in the Background Service Worker. Even if you close this popup, switch tabs, or minimize Chrome, the queue will continue processing.</p>
             <div class="window-action-buttons">
-              <button id="btn-settings-open-tab" class="btn-subtle">⤢ Abrir em Aba Permanente</button>
-              <button id="btn-settings-open-window" class="btn-subtle">🗗 Abrir em Janela Própria</button>
+              <button id="btn-settings-open-tab" class="btn-subtle">⤢ Open in Permanent Tab</button>
+              <button id="btn-settings-open-window" class="btn-subtle">🗗 Open in Standalone Window</button>
             </div>
           </div>
 
           <div class="settings-actions">
-            <button id="btn-clear-cache" class="btn-subtle-danger">Limpar Tweets em Cache Local</button>
-            <span id="settings-save-feedback" class="save-feedback">Configurações salvas!</span>
+            <button id="btn-clear-cache" class="btn-subtle-danger">Clear Local Cached Tweets</button>
+            <span id="settings-save-feedback" class="save-feedback">Settings saved!</span>
           </div>
         </div>
       </section>
@@ -228,20 +228,20 @@
           <div id="progress-bar-fill" class="progress-bar-fill"></div>
         </div>
         <div class="progress-info">
-          <span id="progress-text">Processando...</span>
+          <span id="progress-text">Processing...</span>
           <div class="progress-buttons">
-            <button id="btn-pause-process" class="btn-xs">⏸️ Pausar</button>
-            <button id="btn-cancel-process" class="btn-xs btn-danger">❌ Cancelar</button>
+            <button id="btn-pause-process" class="btn-xs">⏸️ Pause</button>
+            <button id="btn-cancel-process" class="btn-xs btn-danger">❌ Cancel</button>
           </div>
         </div>
       </div>
 
       <div class="action-bar-content">
         <div class="selection-summary">
-          <span id="bulk-selection-label">Nenhum tweet selecionado</span>
+          <span id="bulk-selection-label">No tweets selected</span>
         </div>
         <button id="btn-delete-selected" class="btn-danger" disabled>
-          🗑️ Apagar Selecionados (0)
+          🗑️ Delete Selected (0)
         </button>
       </div>
     </footer>
@@ -249,10 +249,10 @@
     <!-- Collapsible Live Event Console -->
     <aside id="logger-container" class="logger-container collapsed">
       <div class="logger-header">
-        <span class="logger-title">📜 Console de Execução</span>
+        <span class="logger-title">📜 Execution Console</span>
         <div class="logger-header-actions">
-          <button id="btn-clear-logs" class="btn-xs" title="Limpar logs">Limpar</button>
-          <button id="btn-toggle-logs" class="btn-xs">Alternar</button>
+          <button id="btn-clear-logs" class="btn-xs" title="Clear logs">Clear</button>
+          <button id="btn-toggle-logs" class="btn-xs">Toggle</button>
         </div>
       </div>
       <div id="logger-output" class="logger-output"></div>

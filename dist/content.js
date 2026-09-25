@@ -15,7 +15,7 @@
           <span style="font-size: 16px; animation: spin 2s linear infinite; display: inline-block;">\u2699\uFE0F</span>
           <div>
             <div style="font-weight: 700; font-size: 13px; color: #ffffff;">
-              Tweet Purge: Excluindo ${current} de ${total} (${percent}%)
+              Tweet Delete: Deleting ${current} of ${total} (${percent}%)
             </div>
             <div style="font-size: 11px; color: #a0aec0; margin-top: 1px;">
               ${statusText || `Tweet ID: ${tweetId}`}
@@ -23,7 +23,7 @@
           </div>
         </div>
         <div style="font-size: 10px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.4); white-space: nowrap;">
-          \u26A0\uFE0F N\xE3o feche esta aba
+          \u26A0\uFE0F Do not close this tab
         </div>
       </div>
       <div style="width: 100%; background: #374151; height: 4px; border-radius: 2px; margin-top: 8px; overflow: hidden;">
@@ -328,7 +328,7 @@
               options.current,
               options.total,
               tweetId,
-              candidates.length > 1 ? `Verificando post (${i + 1}/${candidates.length})...` : "Abrindo menu de op\xE7\xF5es..."
+              candidates.length > 1 ? `Checking post (${i + 1}/${candidates.length})...` : "Opening options menu..."
             );
           }
           this.dispatchSafeClick(caretBtn);
@@ -345,18 +345,18 @@
             continue;
           }
           if (options?.current && options?.total && tweetId) {
-            AutomationHud.showProgress(options.current, options.total, tweetId, "Confirmando exclus\xE3o...");
+            AutomationHud.showProgress(options.current, options.total, tweetId, "Confirming deletion...");
           }
           this.dispatchSafeClick(deleteItem);
           await new Promise((r) => setTimeout(r, 400));
           const confirmBtn = await this.findConfirmButton();
           if (!confirmBtn) {
-            return { success: false, error: "Bot\xE3o de confirma\xE7\xE3o de exclus\xE3o n\xE3o apareceu." };
+            return { success: false, error: "Delete confirmation button did not appear." };
           }
           this.dispatchSafeClick(confirmBtn);
           await new Promise((r) => setTimeout(r, 800));
           if (options?.current && options?.total && tweetId) {
-            AutomationHud.showProgress(options.current, options.total, tweetId, "\u2705 Tweet exclu\xEDdo com sucesso.");
+            AutomationHud.showProgress(options.current, options.total, tweetId, "\u2705 Tweet deleted successfully.");
           }
           return { success: true };
         }
@@ -368,7 +368,7 @@
         }
         return {
           success: false,
-          error: 'Op\xE7\xE3o "Excluir" n\xE3o encontrada no menu dos tweets exibidos (verifique se a conta conectada \xE9 a propriet\xE1ria).'
+          error: "Delete option not found in menu (verify that the connected account owns this post)."
         };
       } catch (err) {
         return {
@@ -383,7 +383,7 @@
     static async unretweetByDom(tweetId, options) {
       try {
         if (options?.current && options?.total && tweetId) {
-          AutomationHud.showProgress(options.current, options.total, tweetId, "Localizando Retweet...");
+          AutomationHud.showProgress(options.current, options.total, tweetId, "Locating Retweet...");
         }
         await new Promise((r) => setTimeout(r, 600));
         if (this.isTweetUnavailable()) {
@@ -403,7 +403,7 @@
           if (this.isTweetUnavailable()) {
             return { success: true, alreadyDeleted: true };
           }
-          return { success: false, error: `Retweet ${tweetId || ""} n\xE3o encontrado na p\xE1gina.` };
+          return { success: false, error: `Retweet ${tweetId || ""} not found on page.` };
         }
         for (const item of candidates) {
           const candidate = item.article;
@@ -421,7 +421,7 @@
           }
           await new Promise((r) => setTimeout(r, 400));
           if (options?.current && options?.total && tweetId) {
-            AutomationHud.showProgress(options.current, options.total, tweetId, "Desfazendo Retweet...");
+            AutomationHud.showProgress(options.current, options.total, tweetId, "Undoing Retweet...");
           }
           this.dispatchSafeClick(unretweetBtn);
           await new Promise((r) => setTimeout(r, 400));
@@ -437,16 +437,16 @@
               await new Promise((r) => setTimeout(r, 700));
               return { success: true };
             }
-            return { success: false, error: "Confirma\xE7\xE3o de desrepublica\xE7\xE3o n\xE3o apareceu." };
+            return { success: false, error: "Confirmation popup to unretweet did not appear." };
           }
           this.dispatchSafeClick(confirmBtn);
           await new Promise((r) => setTimeout(r, 800));
           if (options?.current && options?.total && tweetId) {
-            AutomationHud.showProgress(options.current, options.total, tweetId, "\u2705 Retweet desfeito com sucesso.");
+            AutomationHud.showProgress(options.current, options.total, tweetId, "\u2705 Retweet undone successfully.");
           }
           return { success: true };
         }
-        return { success: false, error: "Bot\xE3o de desrepublicar (unretweet) n\xE3o foi encontrado nos artigos exibidos." };
+        return { success: false, error: "Unretweet button was not found in displayed posts." };
       } catch (err) {
         return {
           success: false,

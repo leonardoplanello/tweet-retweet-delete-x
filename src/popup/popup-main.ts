@@ -93,12 +93,12 @@ class PopupController {
           chrome.runtime.sendMessage({ type: 'RESUME_BATCH_JOB' });
           this.progressBarView.setPaused(false);
           this.isBatchPaused = false;
-          this.loggerView.log('Solicitada retomada do processo em segundo plano.');
+          this.loggerView.log('Background resume requested.');
         } else {
           chrome.runtime.sendMessage({ type: 'PAUSE_BATCH_JOB' });
           this.progressBarView.setPaused(true);
           this.isBatchPaused = true;
-          this.loggerView.log('Solicitada pausa do processo em segundo plano.');
+          this.loggerView.log('Background pause requested.');
         }
       },
       onCancel: () => {
@@ -107,7 +107,7 @@ class PopupController {
         this.hideRunningBanner();
         KeepAwakeService.disable();
         this.bulkDeleteBtn.disabled = false;
-        this.loggerView.log('Cancelamento solicitado.');
+        this.loggerView.log('Cancellation requested.');
       }
     });
 
@@ -122,12 +122,12 @@ class PopupController {
       clearCacheBtn: document.getElementById('btn-clear-cache') as HTMLButtonElement,
       saveFeedbackEl: document.getElementById('settings-save-feedback') as HTMLElement,
       onConfigChange: (cfg: ExtensionConfig) => {
-        this.loggerView.log(`Configurações salvas: Método ${cfg.method.toUpperCase()} | Delay ${cfg.minDelayMs}-${cfg.maxDelayMs}ms`);
+        this.loggerView.log(`Settings saved: Method ${cfg.method.toUpperCase()} | Delay ${cfg.minDelayMs}-${cfg.maxDelayMs}ms`);
       },
       onClearCache: () => {
         this.allTweets = [];
         this.syncTweetsToLists();
-        this.loggerView.log('Cache de tweets limpo.');
+        this.loggerView.log('Tweet cache cleared.');
       }
     });
 
@@ -233,7 +233,7 @@ class PopupController {
           this.syncTweetsToLists();
         });
         this.loggerView.log(
-          `[FIM DO LOTE] Concluído! ${message.summary.successCount} excluídos, ${message.summary.failCount} com erro.`
+          `[BATCH COMPLETE] Done! ${message.summary.successCount} deleted, ${message.summary.failCount} failed.`
         );
       }
     });
@@ -268,7 +268,7 @@ class PopupController {
       this.progressBarView.show();
       this.progressBarView.setPaused(true);
       this.progressBarView.update(state.current, state.total, state.message);
-      this.showRunningBanner('Processo pausado em segundo plano.');
+      this.showRunningBanner('Process paused in background.');
       this.bulkDeleteBtn.disabled = true;
       this.isBatchPaused = true;
     } else if (state.status === 'completed' || state.status === 'aborted') {
@@ -291,7 +291,7 @@ class PopupController {
     if (this.bgRunningText && text) {
       this.bgRunningText.textContent = text;
     } else if (this.bgRunningText) {
-      this.bgRunningText.textContent = 'Executando em segundo plano. Seguro para clicar fora ou minimizar.';
+      this.bgRunningText.textContent = 'Running in background. Safe to click away or minimize.';
     }
   }
 
@@ -317,7 +317,7 @@ class PopupController {
           if (this.allTweets.length < beforeCount) {
             await StorageService.saveTweets(this.allTweets);
             this.loggerView.log(
-              `[LIMPEZA AUTOMÁTICA] ${beforeCount - this.allTweets.length} resposta(s) de terceiros removida(s) do histórico local.`
+              `[AUTO CLEANUP] ${beforeCount - this.allTweets.length} third-party reply(ies) removed from local history.`
             );
           }
         }
@@ -325,17 +325,17 @@ class PopupController {
     } catch {}
 
     this.syncTweetsToLists();
-    this.loggerView.log(`Extensão carregada. ${this.allTweets.length} itens no histórico local.`);
+    this.loggerView.log(`Extension loaded. ${this.allTweets.length} items in local cache.`);
   }
 
   private async checkSession(): Promise<void> {
     const session = await XSessionService.getSession();
     if (session.isLoggedIn) {
       this.sessionBadgeEl.className = 'session-status-badge logged-in';
-      this.sessionBadgeEl.textContent = '🟢 Conectado ao X';
+      this.sessionBadgeEl.textContent = '🟢 Connected to X';
     } else {
       this.sessionBadgeEl.className = 'session-status-badge logged-out';
-      this.sessionBadgeEl.textContent = '🟡 Login não detectado no X';
+      this.sessionBadgeEl.textContent = '🟡 Not logged in to X';
     }
   }
 
@@ -358,65 +358,65 @@ class PopupController {
 
     if (selectedCount > 0) {
       this.bulkDeleteBtn.disabled = false;
-      this.bulkDeleteBtn.textContent = `🗑️ Apagar Selecionados (${selectedCount})`;
+      this.bulkDeleteBtn.textContent = `🗑️ Delete Selected (${selectedCount})`;
       const tweetsSel = selectedItems.filter((t) => !t.isRetweet).length;
       const rtsSel = selectedItems.filter((t) => t.isRetweet).length;
-      this.bulkSelectionLabel.textContent = `${selectedCount} item(ns) selecionado(s) (${tweetsSel} tweets, ${rtsSel} retweets)`;
+      this.bulkSelectionLabel.textContent = `${selectedCount} item(s) selected (${tweetsSel} tweets, ${rtsSel} retweets)`;
     } else {
       this.bulkDeleteBtn.disabled = true;
-      this.bulkDeleteBtn.textContent = '🗑️ Apagar Selecionados (0)';
-      this.bulkSelectionLabel.textContent = 'Nenhum tweet selecionado';
+      this.bulkDeleteBtn.textContent = '🗑️ Delete Selected (0)';
+      this.bulkSelectionLabel.textContent = 'No tweets selected';
     }
   }
 
   private async handleScanTimeline(): Promise<void> {
     this.scanBtn.disabled = true;
-    this.scanBtn.textContent = '⏳ Varrendo...';
-    this.loggerView.log('Iniciando varredura da timeline aberta...');
+    this.scanBtn.textContent = '⏳ Scanning...';
+    this.loggerView.log('Starting scan of open profile timeline...');
     await KeepAwakeService.enable();
 
     try {
       const tweets = await TimelineScannerService.startScan({
         onProgress: (found) => {
-          this.loggerView.log(`Varredura em andamento: ${found} tweets visíveis encontrados...`);
+          this.loggerView.log(`Scan in progress: ${found} visible tweets found...`);
         },
         onLog: (msg) => this.loggerView.log(msg)
       });
 
       this.allTweets = tweets;
       this.syncTweetsToLists();
-      this.loggerView.log(`Varredura concluída com sucesso. Total em cache: ${tweets.length}`);
+      this.loggerView.log(`Scan completed successfully. Total in cache: ${tweets.length}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.loggerView.log(`[ERRO NA VARREDURA] ${msg}`);
-      alert(`Atenção: ${msg}`);
+      this.loggerView.log(`[SCAN ERROR] ${msg}`);
+      alert(`Notice: ${msg}`);
     } finally {
       this.scanBtn.disabled = false;
-      this.scanBtn.textContent = '🔍 Varrer Perfil';
+      this.scanBtn.textContent = '🔍 Scan Profile';
       KeepAwakeService.disable();
     }
   }
 
   private async handleDeleteSingle(tweet: TweetItem): Promise<void> {
-    if (!confirm(`Deseja apagar este ${tweet.isRetweet ? 'retweet' : 'tweet'} permanentemente?\n"${tweet.text.slice(0, 80)}..."`)) {
+    if (!confirm(`Are you sure you want to permanently delete this ${tweet.isRetweet ? 'retweet' : 'tweet'}?\n"${tweet.text.slice(0, 80)}..."`)) {
       return;
     }
 
     tweet.status = 'pending';
     this.syncTweetsToLists();
-    this.loggerView.log(`Iniciando exclusão individual de ${tweet.id}...`);
+    this.loggerView.log(`Starting single deletion of ${tweet.id}...`);
 
     const config = this.settingsView.getConfig();
     const res = await DeletionExecutor.execute(tweet, config, { current: 1, total: 1 });
 
     if (res.success) {
       this.markTweetAsDeleted(tweet.id);
-      this.loggerView.log(`✅ Tweet ${tweet.id} excluído com sucesso.`);
+      this.loggerView.log(`✅ Tweet ${tweet.id} deleted successfully.`);
     } else {
       tweet.status = 'failed';
       tweet.errorMessage = res.error;
       this.syncTweetsToLists();
-      this.loggerView.log(`❌ Falha ao excluir ${tweet.id}: ${res.error}`);
+      this.loggerView.log(`❌ Failed to delete ${tweet.id}: ${res.error}`);
     }
     await DomDeleteService.finishSession(false).catch(() => {});
   }
@@ -425,7 +425,7 @@ class PopupController {
     const selected = this.allTweets.filter((t) => t.selected && t.status !== 'success');
     if (selected.length === 0) return;
 
-    const confirmMsg = `ATENÇÃO: Ação irreversível!\n\nDeseja realmente excluir os ${selected.length} itens selecionados?\n\n(O processo continuará rodando em segundo plano mesmo se você clicar fora ou minimizar o navegador.)`;
+    const confirmMsg = `WARNING: Irreversible action!\n\nAre you sure you want to permanently delete the ${selected.length} selected items?\n\n(The process will continue running in the background even if you click away or minimize the browser.)`;
     if (!confirm(confirmMsg)) return;
 
     const config = this.settingsView.getConfig();
@@ -433,11 +433,11 @@ class PopupController {
     this.bulkDeleteBtn.disabled = true;
     this.progressBarView.show();
     this.progressBarView.setPaused(false);
-    this.progressBarView.update(0, selected.length, `Iniciando lote de ${selected.length} itens em segundo plano...`);
+    this.progressBarView.update(0, selected.length, `Starting batch of ${selected.length} items in background...`);
     this.showRunningBanner();
     await KeepAwakeService.enable();
 
-    this.loggerView.log(`[LOTE EM SEGUNDO PLANO] Enviando ${selected.length} item(ns) para processamento em background...`);
+    this.loggerView.log(`[BACKGROUND BATCH] Dispatching ${selected.length} item(s) to background processor...`);
 
     const req: StartBatchJobRequest = {
       type: 'START_BATCH_JOB',
@@ -447,15 +447,15 @@ class PopupController {
 
     chrome.runtime.sendMessage(req, (response) => {
       if (chrome.runtime.lastError || !response?.success) {
-        const err = chrome.runtime.lastError?.message || response?.error || 'Erro desconhecido ao iniciar lote no background';
-        this.loggerView.log(`❌ [FALHA AO INICIAR LOTE] ${err}`);
+        const err = chrome.runtime.lastError?.message || response?.error || 'Unknown error starting background batch';
+        this.loggerView.log(`❌ [BATCH START FAILED] ${err}`);
         this.progressBarView.hide();
         this.hideRunningBanner();
         KeepAwakeService.disable();
         this.bulkDeleteBtn.disabled = false;
-        alert(`Não foi possível iniciar o lote: ${err}`);
+        alert(`Could not start batch: ${err}`);
       } else {
-        this.loggerView.log('⚡ Lote iniciado no background. Você pode fechar o popup, navegar ou minimizar o navegador com segurança!');
+        this.loggerView.log('⚡ Batch started in background. You can safely close the popup, browse, or minimize the browser!');
       }
     });
   }

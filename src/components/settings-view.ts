@@ -66,7 +66,7 @@ export class SettingsView {
     this.options.customDeleteQueryIdInput.addEventListener('change', save);
 
     this.options.clearCacheBtn.addEventListener('click', async () => {
-      if (confirm('Deseja realmente limpar todos os tweets carregados do cache local?')) {
+      if (confirm('Are you sure you want to clear all loaded tweets from local cache?')) {
         await StorageService.clearTweets();
         this.options.onClearCache();
       }
@@ -74,7 +74,7 @@ export class SettingsView {
   }
 
   private showSaveFeedback(): void {
-    this.options.saveFeedbackEl.textContent = 'Configurações salvas!';
+    this.options.saveFeedbackEl.textContent = 'Settings saved!';
     this.options.saveFeedbackEl.classList.add('visible');
     setTimeout(() => {
       this.options.saveFeedbackEl.classList.remove('visible');

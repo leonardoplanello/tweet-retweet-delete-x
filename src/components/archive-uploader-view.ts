@@ -55,15 +55,15 @@ export class ArchiveUploaderView {
   }
 
   private async processFile(file: File): Promise<void> {
-    this.showStatus(`Lendo arquivo "${file.name}" (${(file.size / 1024).toFixed(1)} KB)...`, 'info');
-    this.options.onLog(`[ARQUIVO] Processando arquivo de dados: ${file.name}`);
+    this.showStatus(`Reading file "${file.name}" (${(file.size / 1024).toFixed(1)} KB)...`, 'info');
+    this.options.onLog(`[ARCHIVE] Processing data file: ${file.name}`);
 
     try {
       const content = await file.text();
       const items = ArchiveParserService.parse(content);
 
       if (items.length === 0) {
-        this.showStatus('Nenhum tweet foi identificado dentro do arquivo.', 'error');
+        this.showStatus('No tweets were found in this file.', 'error');
         return;
       }
 
@@ -74,15 +74,15 @@ export class ArchiveUploaderView {
       const merged = await StorageService.mergeTweets(items);
 
       this.showStatus(
-        `✅ Importação concluída! Carregados ${tweetsCount} Tweets e ${rtsCount} Retweets (${items.length} no total).`,
+        `✅ Import complete! Loaded ${tweetsCount} Tweets and ${rtsCount} Retweets (${items.length} total).`,
         'success'
       );
-      this.options.onLog(`[ARQUIVO SUCESSO] ${tweetsCount} tweets e ${rtsCount} retweets carregados no cache local.`);
+      this.options.onLog(`[ARCHIVE SUCCESS] ${tweetsCount} tweets and ${rtsCount} retweets cached locally.`);
       this.options.onArchiveLoaded(merged);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.showStatus(`Erro ao processar: ${msg}`, 'error');
-      this.options.onLog(`[ARQUIVO ERRO] ${msg}`);
+      this.showStatus(`Error processing file: ${msg}`, 'error');
+      this.options.onLog(`[ARCHIVE ERROR] ${msg}`);
     }
   }
 

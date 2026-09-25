@@ -32,7 +32,7 @@ export class GraphqlDeleteService {
     if (!session.csrfToken) {
       return {
         success: false,
-        error: 'Sessão do X não encontrada. Abra o x.com no navegador para sincronizar seu login.'
+        error: 'X session not found. Open x.com in your browser to sync your login.'
       };
     }
 
@@ -61,17 +61,17 @@ export class GraphqlDeleteService {
           const body = await res.json().catch(() => ({}));
           // Verifica se houve erro nos erros internos do GraphQL
           if (body.errors && body.errors.length > 0) {
-            const msg = body.errors[0]?.message || 'Erro interno no GraphQL';
+            const msg = body.errors[0]?.message || 'Internal GraphQL error';
             return { success: false, statusCode: 200, error: msg };
           }
           return { success: true, statusCode: 200 };
         }
 
         if (res.status === 429) {
-          return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit excedido (429)' };
+          return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit exceeded (429)' };
         }
       } catch (err) {
-        console.warn(`Tentativa GraphQL DeleteTweet com ${qId} falhou:`, err);
+        console.warn(`GraphQL DeleteTweet attempt with ${qId} failed:`, err);
       }
     }
 
@@ -88,17 +88,17 @@ export class GraphqlDeleteService {
         return { success: true, statusCode: res.status };
       }
       if (res.status === 429) {
-        return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit excedido (429)' };
+        return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit exceeded (429)' };
       }
       if (res.status === 404) {
         // Já não existe ou já foi apagado
-        return { success: true, statusCode: 404, error: 'Tweet já excluído ou não encontrado (404)' };
+        return { success: true, statusCode: 404, error: 'Tweet already deleted or not found (404)' };
       }
 
       return {
         success: false,
         statusCode: res.status,
-        error: `Falha na requisição HTTP: ${res.status} ${res.statusText}`
+        error: `HTTP request failed: ${res.status} ${res.statusText}`
       };
     } catch (err) {
       return {
@@ -116,7 +116,7 @@ export class GraphqlDeleteService {
     if (!session.csrfToken) {
       return {
         success: false,
-        error: 'Sessão do X não encontrada. Abra o x.com no navegador.'
+        error: 'X session not found. Open x.com in your browser.'
       };
     }
 
@@ -145,10 +145,10 @@ export class GraphqlDeleteService {
           return { success: true, statusCode: 200 };
         }
         if (res.status === 429) {
-          return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit excedido (429)' };
+          return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit exceeded (429)' };
         }
       } catch (err) {
-        console.warn(`Tentativa GraphQL DeleteRetweet com ${qId} falhou:`, err);
+        console.warn(`GraphQL DeleteRetweet attempt with ${qId} failed:`, err);
       }
     }
 
@@ -165,12 +165,12 @@ export class GraphqlDeleteService {
         return { success: true, statusCode: res.status };
       }
       if (res.status === 429) {
-        return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit (429)' };
+        return { success: false, statusCode: 429, isRateLimit: true, error: 'Rate limit exceeded (429)' };
       }
       return {
         success: false,
         statusCode: res.status,
-        error: `Falha HTTP: ${res.status}`
+        error: `HTTP failure: ${res.status}`
       };
     } catch (err) {
       return {

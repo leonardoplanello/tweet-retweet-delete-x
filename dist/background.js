@@ -234,7 +234,7 @@
       if (!session.csrfToken) {
         return {
           success: false,
-          error: "Sess\xE3o do X n\xE3o encontrada. Abra o x.com no navegador para sincronizar seu login."
+          error: "X session not found. Open x.com in your browser to sync your login."
         };
       }
       const queryIdsToTry = customQueryId ? [customQueryId, ...this.KNOWN_DELETE_QUERY_IDS] : this.KNOWN_DELETE_QUERY_IDS;
@@ -256,16 +256,16 @@
           if (res.status === 200) {
             const body = await res.json().catch(() => ({}));
             if (body.errors && body.errors.length > 0) {
-              const msg = body.errors[0]?.message || "Erro interno no GraphQL";
+              const msg = body.errors[0]?.message || "Internal GraphQL error";
               return { success: false, statusCode: 200, error: msg };
             }
             return { success: true, statusCode: 200 };
           }
           if (res.status === 429) {
-            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit excedido (429)" };
+            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
           }
         } catch (err) {
-          console.warn(`Tentativa GraphQL DeleteTweet com ${qId} falhou:`, err);
+          console.warn(`GraphQL DeleteTweet attempt with ${qId} failed:`, err);
         }
       }
       try {
@@ -279,15 +279,15 @@
           return { success: true, statusCode: res.status };
         }
         if (res.status === 429) {
-          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit excedido (429)" };
+          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
         }
         if (res.status === 404) {
-          return { success: true, statusCode: 404, error: "Tweet j\xE1 exclu\xEDdo ou n\xE3o encontrado (404)" };
+          return { success: true, statusCode: 404, error: "Tweet already deleted or not found (404)" };
         }
         return {
           success: false,
           statusCode: res.status,
-          error: `Falha na requisi\xE7\xE3o HTTP: ${res.status} ${res.statusText}`
+          error: `HTTP request failed: ${res.status} ${res.statusText}`
         };
       } catch (err) {
         return {
@@ -304,7 +304,7 @@
       if (!session.csrfToken) {
         return {
           success: false,
-          error: "Sess\xE3o do X n\xE3o encontrada. Abra o x.com no navegador."
+          error: "X session not found. Open x.com in your browser."
         };
       }
       const queryIdsToTry = customQueryId ? [customQueryId, ...this.KNOWN_UNRETWEET_QUERY_IDS] : this.KNOWN_UNRETWEET_QUERY_IDS;
@@ -327,10 +327,10 @@
             return { success: true, statusCode: 200 };
           }
           if (res.status === 429) {
-            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit excedido (429)" };
+            return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
           }
         } catch (err) {
-          console.warn(`Tentativa GraphQL DeleteRetweet com ${qId} falhou:`, err);
+          console.warn(`GraphQL DeleteRetweet attempt with ${qId} failed:`, err);
         }
       }
       try {
@@ -344,12 +344,12 @@
           return { success: true, statusCode: res.status };
         }
         if (res.status === 429) {
-          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit (429)" };
+          return { success: false, statusCode: 429, isRateLimit: true, error: "Rate limit exceeded (429)" };
         }
         return {
           success: false,
           statusCode: res.status,
-          error: `Falha HTTP: ${res.status}`
+          error: `HTTP failure: ${res.status}`
         };
       } catch (err) {
         return {
@@ -671,7 +671,7 @@
     isRunning = false;
     async start(items, config, callbacks) {
       if (this.isRunning) {
-        throw new Error("J\xE1 existe um processo de exclus\xE3o em andamento.");
+        throw new Error("A deletion process is already running.");
       }
       this.isRunning = true;
       this.rateLimiter.reset();
@@ -679,31 +679,31 @@
       const total = toProcess.length;
       let successCount = 0;
       let failCount = 0;
-      callbacks.onLog(`[IN\xCDCIO DO LOTE] Iniciando exclus\xE3o de ${total} item(ns)... M\xE9todo: ${config.method.toUpperCase()}`);
+      callbacks.onLog(`[BATCH START] Starting deletion of ${total} item(s)... Method: ${config.method.toUpperCase()}`);
       try {
         for (let i = 0; i < total; i++) {
           if (this.rateLimiter.aborted) {
-            callbacks.onLog("[CANCELADO] Opera\xE7\xE3o cancelada pelo usu\xE1rio.");
+            callbacks.onLog("[CANCELLED] Operation cancelled by user.");
             break;
           }
           const item = toProcess[i];
           item.status = "pending";
-          callbacks.onProgress(i + 1, total, item, `Processando ${i + 1} de ${total}: Tweet ${item.id}`);
-          callbacks.onLog(`[${i + 1}/${total}] Excluindo ${item.isRetweet ? "Retweet" : "Tweet"} ID: ${item.id}...`);
+          callbacks.onProgress(i + 1, total, item, `Processing ${i + 1} of ${total}: Tweet ${item.id}`);
+          callbacks.onLog(`[${i + 1}/${total}] Deleting ${item.isRetweet ? "Retweet" : "Tweet"} ID: ${item.id}...`);
           let result = await DeletionExecutor.execute(item, config, {
             current: i + 1,
             total
           });
           if (result.isRateLimit && config.autoPauseOnRateLimit) {
-            callbacks.onLog(`\u26A0\uFE0F [RATE LIMIT 429 DETECTADO] Pausando por ${config.rateLimitCooldownSeconds} segundos para seguran\xE7a...`);
+            callbacks.onLog(`\u26A0\uFE0F [RATE LIMIT 429 DETECTED] Pausing for ${config.rateLimitCooldownSeconds} seconds for safety...`);
             await this.rateLimiter.cooldown(
               config.rateLimitCooldownSeconds,
               (sec) => {
-                callbacks.onProgress(i + 1, total, item, `Rate Limit atingido. Aguardando ${sec}s para retomar com seguran\xE7a...`);
+                callbacks.onProgress(i + 1, total, item, `Rate Limit reached. Waiting ${sec}s to safely resume...`);
               },
               callbacks.onHeartbeat
             );
-            callbacks.onLog(`Retomando tentativa para o Tweet ${item.id}...`);
+            callbacks.onLog(`Retrying deletion for Tweet ${item.id}...`);
             result = await DeletionExecutor.execute(item, config, {
               current: i + 1,
               total
@@ -713,12 +713,12 @@
             item.status = "success";
             item.selected = false;
             successCount++;
-            callbacks.onLog(`\u2705 [SUCESSO] ${item.isRetweet ? "Retweet" : "Tweet"} ${item.id} removido.`);
+            callbacks.onLog(`\u2705 [SUCCESS] ${item.isRetweet ? "Retweet" : "Tweet"} ${item.id} removed.`);
           } else {
             item.status = "failed";
-            item.errorMessage = result.error || "Falha na exclus\xE3o";
+            item.errorMessage = result.error || "Deletion failed";
             failCount++;
-            callbacks.onLog(`\u274C [FALHA] Tweet ${item.id}: ${item.errorMessage}`);
+            callbacks.onLog(`\u274C [FAILED] Tweet ${item.id}: ${item.errorMessage}`);
           }
           callbacks.onItemCompleted(item, result.success);
           await StorageService.mergeTweets(items).catch(() => {
@@ -728,7 +728,7 @@
               config.minDelayMs,
               config.maxDelayMs,
               (remainingMs) => {
-                callbacks.onProgress(i + 1, total, item, `Aguardando ${(remainingMs / 1e3).toFixed(1)}s (Cad\xEAncia Segura)...`);
+                callbacks.onProgress(i + 1, total, item, `Waiting ${(remainingMs / 1e3).toFixed(1)}s (Safe Cadence)...`);
               },
               callbacks.onHeartbeat
             );
@@ -736,7 +736,7 @@
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        callbacks.onLog(`[ERRO NO LOTE] ${msg}`);
+        callbacks.onLog(`[BATCH ERROR] ${msg}`);
       } finally {
         this.isRunning = false;
         await StorageService.mergeTweets(items);

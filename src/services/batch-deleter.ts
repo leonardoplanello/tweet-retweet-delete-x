@@ -26,7 +26,7 @@ export class BatchDeleter {
     callbacks: BatchDeleterCallbacks
   ): Promise<void> {
     if (this.isRunning) {
-      throw new Error('Já existe um processo de exclusão em andamento.');
+      throw new Error('A deletion process is already running.');
     }
 
     this.isRunning = true;
@@ -37,19 +37,19 @@ export class BatchDeleter {
     let successCount = 0;
     let failCount = 0;
 
-    callbacks.onLog(`[INÍCIO DO LOTE] Iniciando exclusão de ${total} item(ns)... Método: ${config.method.toUpperCase()}`);
+    callbacks.onLog(`[BATCH START] Starting deletion of ${total} item(s)... Method: ${config.method.toUpperCase()}`);
 
     try {
       for (let i = 0; i < total; i++) {
         if (this.rateLimiter.aborted) {
-          callbacks.onLog('[CANCELADO] Operação cancelada pelo usuário.');
+          callbacks.onLog('[CANCELLED] Operation cancelled by user.');
           break;
         }
 
         const item = toProcess[i];
         item.status = 'pending';
-        callbacks.onProgress(i + 1, total, item, `Processando ${i + 1} de ${total}: Tweet ${item.id}`);
-        callbacks.onLog(`[${i + 1}/${total}] Excluindo ${item.isRetweet ? 'Retweet' : 'Tweet'} ID: ${item.id}...`);
+        callbacks.onProgress(i + 1, total, item, `Processing ${i + 1} of ${total}: Tweet ${item.id}`);
+        callbacks.onLog(`[${i + 1}/${total}] Deleting ${item.isRetweet ? 'Retweet' : 'Tweet'} ID: ${item.id}...`);
 
         let result = await DeletionExecutor.execute(item, config, {
           current: i + 1,
@@ -58,17 +58,17 @@ export class BatchDeleter {
 
         // Tratamento de Rate Limit (HTTP 429)
         if (result.isRateLimit && config.autoPauseOnRateLimit) {
-          callbacks.onLog(`⚠️ [RATE LIMIT 429 DETECTADO] Pausando por ${config.rateLimitCooldownSeconds} segundos para segurança...`);
+          callbacks.onLog(`⚠️ [RATE LIMIT 429 DETECTED] Pausing for ${config.rateLimitCooldownSeconds} seconds for safety...`);
           await this.rateLimiter.cooldown(
             config.rateLimitCooldownSeconds,
             (sec) => {
-              callbacks.onProgress(i + 1, total, item, `Rate Limit atingido. Aguardando ${sec}s para retomar com segurança...`);
+              callbacks.onProgress(i + 1, total, item, `Rate Limit reached. Waiting ${sec}s to safely resume...`);
             },
             callbacks.onHeartbeat
           );
 
           // Nova tentativa após o cooldown
-          callbacks.onLog(`Retomando tentativa para o Tweet ${item.id}...`);
+          callbacks.onLog(`Retrying deletion for Tweet ${item.id}...`);
           result = await DeletionExecutor.execute(item, config, {
             current: i + 1,
             total
@@ -79,12 +79,12 @@ export class BatchDeleter {
           item.status = 'success';
           item.selected = false;
           successCount++;
-          callbacks.onLog(`✅ [SUCESSO] ${item.isRetweet ? 'Retweet' : 'Tweet'} ${item.id} removido.`);
+          callbacks.onLog(`✅ [SUCCESS] ${item.isRetweet ? 'Retweet' : 'Tweet'} ${item.id} removed.`);
         } else {
           item.status = 'failed';
-          item.errorMessage = result.error || 'Falha na exclusão';
+          item.errorMessage = result.error || 'Deletion failed';
           failCount++;
-          callbacks.onLog(`❌ [FALHA] Tweet ${item.id}: ${item.errorMessage}`);
+          callbacks.onLog(`❌ [FAILED] Tweet ${item.id}: ${item.errorMessage}`);
         }
 
         callbacks.onItemCompleted(item, result.success);
@@ -98,7 +98,7 @@ export class BatchDeleter {
             config.minDelayMs,
             config.maxDelayMs,
             (remainingMs) => {
-              callbacks.onProgress(i + 1, total, item, `Aguardando ${(remainingMs / 1000).toFixed(1)}s (Cadência Segura)...`);
+              callbacks.onProgress(i + 1, total, item, `Waiting ${(remainingMs / 1000).toFixed(1)}s (Safe Cadence)...`);
             },
             callbacks.onHeartbeat
           );
@@ -106,7 +106,7 @@ export class BatchDeleter {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      callbacks.onLog(`[ERRO NO LOTE] ${msg}`);
+      callbacks.onLog(`[BATCH ERROR] ${msg}`);
     } finally {
       this.isRunning = false;
       await StorageService.mergeTweets(items);
